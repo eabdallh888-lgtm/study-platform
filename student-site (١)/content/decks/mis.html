@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نظم المعلومات الإدارية MIS — شرح مرسوم</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Lemonada:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--c:#f59e0b;--c-2:#fbbf24;--c-grad:linear-gradient(90deg,var(--c),var(--c-2));--bg:#07070d;--tp:#f0eeff;--ts:#8a8aa3;--tm:#4b4b62;--border:rgba(255,255,255,.06);--syntax-grad:linear-gradient(135deg,#6366f1,#a855f7,#ec4899);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--tp);font-family:Cairo,sans-serif;overflow:hidden}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center}
+#wrap{position:relative}
+#deck{width:1100px;height:619px;position:absolute;top:0;left:0;transform-origin:top left;background:#0b0b14;border-radius:20px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.slide{position:absolute;inset:0;padding:30px 48px 18px;display:none;flex-direction:column}
+.slide.on{display:flex}.slide{--c-grad:linear-gradient(90deg,var(--c),var(--c-2))}
+.c1{--c:#ec4899;--c-2:#a855f7}.c2{--c:#6366f1;--c-2:#8b5cf6}.c3{--c:#f59e0b;--c-2:#fbbf24}.c4{--c:#22d3ee;--c-2:#06b6d4}.c5{--c:#10b981;--c-2:#34d399}
+.slide.on>*{animation:ru .6s both}
+@keyframes ru{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.lbl{color:var(--c);font-weight:700;font-size:15px;letter-spacing:.5px}
+h2{margin:2px 0 0;font-size:40px;font-weight:900;line-height:1.3}
+h2 em{font-style:normal;background:var(--c-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--ts);font-size:18px;margin:2px 0 0}
+.stage{flex:1;margin:10px 0 8px;min-height:0;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+canvas{width:100%;height:100%;display:block}
+.sf{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--tm)}
+.sf span:last-child{color:var(--ts)}
+.pd{display:flex;gap:6px}.pd i{width:7px;height:7px;border-radius:50%;background:var(--tm)}.pd i.a{background:var(--c);width:20px;border-radius:4px}
+.sub.hid{visibility:hidden}
+#ov{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none;touch-action:none}
+#ov.on{pointer-events:auto;cursor:crosshair}
+#nav{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;margin-top:8px;max-width:1100px;color:var(--ts);font-size:14px}
+#nav button{background:#15151f;color:var(--tp);border:1px solid var(--border);border-radius:10px;padding:5px 12px;font:inherit;cursor:pointer}
+#nav button.on{border-color:#fbbf24;background:#2a2410}
+.swc{display:inline-block;width:24px;height:24px;border-radius:50%;margin:0 3px;border:2px solid transparent;cursor:pointer;vertical-align:middle}
+.swc.on{border-color:#fff}
+</style>
+</head>
+<body>
+<div id="wrap"><div id="deck"></div></div>
+<div id="nav"><button id="pv">السابق ▶</button><span id="cn"></span><button id="nx">◀ التالي</button>
+<button id="s1">▼ إظهار (مسافة)</button><button id="s0">▲ إخفاء</button><button id="sa">إظهار الكل</button><button id="sr">إعادة</button>
+<button id="pb">✏️ قلم</button><span id="sw"></span><button id="eb">🧽 ممحاة</button><button id="cb">مسح الرسم</button></div>
+<script>
+const ar=s=>String(s).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+// n: [x%,y%,w%,h%,label,sub('|' = سطر)]  a: [من,إلى]
+const D=[
+{c:1,l:'دليل مراجعة إبداعي لكل ما كُتب على السبورة',h:'نظم المعلومات <em>الإدارية</em> MIS',s:'الفكرة المحورية: ٣ عناصر جوهرية تتكامل معاً',f:'تعالى نفكك الاسم لتلات حتت',t:'MIS',
+ n:[[50,50,56,60,'MIS','Management Information Systems|نظم المعلومات الإدارية|بيئة عمل رقمية تخدم أهداف المؤسسة|وتدعم اتخاذ القرار']],a:[]},
+{c:1,l:'تفكيك مصطلح MIS',h:'MIS = <em>٣ عناصر</em> بتكمّل بعض',s:'System + Information + Management',f:'في مفهومين مكتوبين على السبورة كمان',t:'Systems · Information · Management',
+ n:[[80,36,27,46,'نظم','System|يرتبط بالحاسب الآلي (Computer)|وأعضاء النظام (Members)|والكيان التنظيمي (Organization)'],[50,36,27,46,'المعلومات','Information|المخرجات ذات المعنى والقيمة|الناتجة عن تشغيل وتحويل|البيانات الخام (Data)'],[20,36,27,46,'إدارية','Management|الجانب الإداري والتنظيمي|داخل المؤسسة والأنشطة|الداعمة لاتخاذ القرارات'],[50,85,70,18,'بيئة رقمية تخدم أهداف المؤسسة وتدعم القرار']],a:[[0,3],[1,3],[2,3]]},
+{c:1,l:'مفاهيم فرعية على السبورة الأولى',h:'تحليل البيانات <em>ومعلومات المنظمة</em>',s:'الاتنين بيخدموا القرار جوّه المؤسسة',f:'طب البيانات دي بتتحول لمعلومات إزاي؟',t:'Data Analysis · IO',
+ n:[[74,50,42,56,'تحليل البيانات','Data Analysis / Analyzer|العملية التقنية التي يتم من خلالها|فحص البيانات واستخراج المؤشرات|لدعم القرار'],[26,50,42,56,'معلومات المنظمة','IO — Information Organization|الهيكلية التي تربط بين التدفق الرقمي|للبيانات والمعلومات|والإطار التنظيمي للمؤسسة']],a:[]},
+{c:2,l:'دورة معالجة البيانات',h:'مدخلات ← معالجة ← <em>مخرجات</em>',s:'Data Processing Cycle',f:'والقاعدة اللي لازم تتحفظ',t:'Data Processing Cycle',
+ n:[[82,48,28,66,'المدخلات','Input — البيانات الخام (Data)|النصوص Text / Txt|الصور Images / Img|الفيديو Video|الصوتيات Audio'],[50,48,27,46,'المعالجة والتشغيل','Processing|جميع العمليات الرياضية|والمنطقية والتحليلات|على مدخلات البيانات'],[18,48,27,46,'المخرجات','Output — Information|المعلومات النهائية المنتجة|ذات المعنى والسياق المباشر']],a:[[0,1],[1,2]]},
+{c:2,l:'القاعدة',h:'جملة <em>تتحفظ</em>',s:'البيانات (Data) حقائق أولية وأرقام مجردة ليس لها معنى بمفردها',f:'المعلومات محتاجة مكان تتخزن فيه',t:'Data → Information',
+ n:[[82,40,26,40,'البيانات','Data|حقائق أولية وأرقام مجردة|بلا معنى بمفردها'],[50,40,26,40,'المعالجة','Processing|جميع مراحل|المعالجة والتشغيل'],[18,40,26,40,'المعلومات','Information|ذات قيمة وعمق'],[50,84,74,18,'البيانات + المعالجة = معلومات']],a:[[0,1],[1,2]]},
+{c:3,l:'وحدات قياس التخزين',h:'من البت لحد <em>التيرابايت</em>',s:'ذاكرة الحاسب تعتمد على التدرج المضاعف بـ ١٠٢٤ للانتقال للوحدة التالية',f:'والتخزين ده بيشتغل فوق نظام تشغيل',t:'Storage Units',
+ n:[[89,44,14,48,'بت','Bit|أصغر وحدة تخزين|بالحاسب (0 أو 1)'],[74,44,14,48,'بايت','Byte|يساوي 8 بت'],[59,44,14,48,'K.B','Kilobyte|1024 بايت'],[44,44,14,48,'M.B','Megabyte|1024 K.B'],[29,44,14,48,'G.B','Gigabyte|1024 M.B'],[14,44,14,48,'T.B','Terabyte|1024 G.B'],[50,86,70,16,'كل وحدة = 1024 × الوحدة اللي قبلها']],a:[[0,1],[1,2],[2,3],[3,4],[4,5]]},
+{c:3,l:'نظم التشغيل وتقسيم الأقراص',h:'DOS <em>و GUI</em>',s:'تقسيم القرص: Drives C, D, E, F',f:'دلوقتي نفتح الجهاز نفسه',t:'Operating Systems & Drives',
+ n:[[76,28,40,36,'DOS','Disk Operating System|نظام تشغيل القرص القديم|القائم على الأوامر النصية المباشرة'],[26,28,40,36,'GUI','Graphical User Interface|الواجهة الرسومية الحديثة|أيقونات ونوافذ'],[82,74,18,32,'C','يتم تثبيت نظام|التشغيل S.O عليه'],[60,74,16,32,'D','Drive'],[40,74,16,32,'E','Drive'],[20,74,16,32,'F','Drive']],a:[[0,1]]},
+{c:3,l:'هيكلية ونظام الحاسب الآلي',h:'الحاسب <em>الآلي</em>',s:'شقين متكاملين: المكونات المادية (Hardware) والبرمجيات (Software)',f:'نفصّل الشقين',t:'Computer System Architecture',
+ n:[[80,42,27,44,'الحاسب الآلي','Electronic Device|جهاز إلكتروني'],[50,42,27,44,'وظيفته الأساسية','حل المشكلات (Problems Solving)|والإجابة عن سؤال|ماذا نفعل؟ (What to do?)'],[20,42,27,44,'وتبدأ عمليته بـ','Booting|مركبة الإقلاع'],[50,86,70,16,'ينقسم إلى: Hardware + Software']],a:[[0,1],[1,2]]},
+{c:3,l:'شجرة الحاسب',h:'المكونات <em>والبرمجيات</em>',s:'Hardware (H.W) و Software (S.W) وتفرعاتهم',f:'نبدأ بالمدخلات والمعالجة',t:'Computer Tree',
+ n:[[44,13,32,16,'الحاسب الآلي','جهاز إلكتروني'],[68,45,24,16,'Hardware','H.W المكونات المادية'],[21,45,24,16,'Software','S.W البرمجيات'],[91,80,15,20,'مدخلات','Input Devices'],[76,80,15,20,'معالجة','CPU'],[61,80,15,20,'تخزين','Storage Devices'],[46,80,15,20,'مخرجات','Output Devices'],[29,80,15,20,'S.O','نظم التشغيل'],[12,80,15,20,'P.A','البرامج التطبيقية']],a:[[0,1],[0,2],[1,3],[1,4],[1,5],[1,6],[2,7],[2,8]]},
+{c:3,l:'المكونات المادية',h:'مدخلات ← معالجة ← <em>مخرجات</em>',s:'أجهزة المدخلات + CPU + أجهزة المخرجات',f:'والمعالجة محتاجة ذاكرة',t:'Input · CPU · Output',
+ n:[[88,20,20,24,'لوحة المفاتيح','Keyboard / K.B'],[64,20,20,24,'الفأرة','Mouse'],[88,50,20,24,'الماسح الضوئي','Scanner'],[64,50,20,24,'الكاميرا','Camera / Webcam'],[76,80,20,24,'الميكروفون','Mic / Microphone'],[38,50,22,54,'CPU','Central Processing|Unit|وحدة المعالجة المركزية'],[11,50,18,50,'أجهزة المخرجات','Output Devices|عرض وتصدير النتائج|والمعلومات للعميل']],a:[[0,5],[1,5],[2,5],[3,5],[4,5],[5,6]]},
+{c:3,l:'أجهزة التخزين والذاكرة',h:'الذاكرة <em>الرئيسية والثانوية</em>',s:'Primary Storage (P.S) و Secondary Storage (S.S)',f:'وفوق كل ده بتيجي البرمجيات',t:'Storage Devices',
+ n:[[53,13,34,16,'أجهزة التخزين والذاكرة'],[79,45,26,16,'الرئيسية P.S','Primary Storage'],[27,45,26,16,'الثانوية S.S','Secondary Storage'],[88,80,15,24,'RAM','ذاكرة الوصول|العشوائي المؤقتة'],[70,80,15,24,'ROM','ذاكرة القراءة|فقط الدائمة'],[45,80,15,24,'H.D','Hard Disk|القرص الصلب'],[28,80,15,24,'C.D','Compact Disc|القرص المدمج'],[11,80,15,24,'F.D','Floppy Disk|القرص المرن']],a:[[0,1],[0,2],[1,3],[1,4],[2,5],[2,6],[2,7]]},
+{c:3,l:'البرمجيات Software',h:'نوعين <em>من البرمجيات</em>',s:'S.O للتشغيل والإدارة، و P.A للمستخدم أو المؤسسة',f:'كل المصطلحات دي اتجمعت في قاموس',t:'Software S.W',
+ n:[[50,14,36,16,'البرمجيات S.W'],[74,60,36,50,'نظم التشغيل S.O','Operating System|البرامج الأساسية لتشغيل|وإدارة أجهزة الحاسب'],[26,60,36,50,'البرامج التطبيقية P.A','Application Programs|التطبيقات الموجهة للمستخدم (User)|أو المؤسسة (Org)|مثل حزمة Microsoft Office']],a:[[0,1],[0,2]]},
+{c:4,l:'قاموس المصطلحات الموحد ١',h:'مصطلحات <em>تحفظها</em>',s:'الاختصار — الاسم الكامل — المعنى بالعربي',f:'كمّل باقي القاموس',t:'Master Dictionary (1/2)',
+ n:[[80,20,28,27,'MIS','Management Information Systems|نظم المعلومات الإدارية'],[50,20,28,27,'Data','Raw Data|البيانات (حقائق أولية بلا معنى)'],[20,20,28,27,'Information','Processed Data|المعلومات (نتائج ذات معنى وقيمة)'],[80,50,28,27,'I O','Information Organization|معلومات المؤسسة / المنظمة'],[50,50,28,27,'Input','System Input|المدخلات (نصوص، صور، فيديو، صوت)'],[20,50,28,27,'Processing','Data Processing|المعالجة والتشغيل'],[80,80,28,27,'Output','System Output|المخرجات والنتائج'],[50,80,28,27,'Bit / Byte','Binary Digit / Byte|أصغر وحدات قياس الذاكرة (البايت = 8 بت)'],[20,80,28,27,'K.B / M.B / G.B / T.B','Kilobyte / Megabyte|Gigabyte / Terabyte|وحدات قياس السعة (× 1024)']],a:[]},
+{c:4,l:'قاموس المصطلحات الموحد ٢',h:'وكمان <em>مصطلحات</em>',s:'الاختصار — الاسم الكامل — المعنى بالعربي',f:'جاهز تراجع الرحلة كلها؟',t:'Master Dictionary (2/2)',
+ n:[[80,20,28,27,'DOS','Disk Operating System|نظام تشغيل القرص النصي'],[50,20,28,27,'GUI','Graphical User Interface|واجهة المستخدم الرسومية'],[20,20,28,27,'H.W','Hardware|المكونات المادية الملموسة للحاسب'],[80,50,28,27,'S.W','Software|البرمجيات والأنظمة والبرامج التطبيقية'],[50,50,28,27,'CPU','Central Processing Unit|وحدة المعالجة المركزية'],[20,50,28,27,'RAM','Random Access Memory|ذاكرة الوصول العشوائي المؤقتة'],[80,80,28,27,'ROM','Read Only Memory|ذاكرة القراءة فقط الدائمة'],[50,80,28,27,'H.D / C.D / F.D','Hard Disk / Compact Disc / Floppy Disk|وسائط التخزين الثانوي (صلب / مدمج / مرن)'],[20,80,28,27,'O.S / A.P','Operating System / Application Programs|نظم التشغيل والبرامج التطبيقية']],a:[]},
+{c:5,l:'نفّذ',h:'الرحلة كلها <em>في رسمة</em>',s:'جرّب ترسمها لوحدك على السبورة بالقلم من الأول للآخر',f:'ابدأ من البيانات… وارسم',t:'MIS — The Whole Journey',
+ n:[[88,46,17,42,'بيانات','Data'],[69,46,17,42,'معالجة','Processing'],[50,46,17,42,'معلومات','Information'],[31,46,17,42,'تخزين','Bit → T.B'],[12,46,17,42,'حاسب','H.W + S.W'],[50,86,60,16,'= MIS']],a:[[0,1],[1,2],[2,3],[3,4],[4,5]]}
+];
+const deck=document.getElementById('deck');
+D.forEach((d,i)=>{
+ const s=document.createElement('div');s.className='slide c'+d.c;
+ s.innerHTML=(`<div class="lbl">${ar(d.l)}</div><h2>${ar(d.h)}</h2><p class="sub">${ar(d.s)}</p><div class="stage"><canvas></canvas></div><div class="sf"><span>ABDU · نظم المعلومات الإدارية</span><div class="pd">${D.map((_,k)=>`<i class="${k==i?'a':''}"></i>`).join('')}</div><span>${ar(d.f)}</span></div>`);
+ deck.appendChild(s);d.el=s;d.cv=s.querySelector('canvas');
+});
+let cur=0,fr=0,pen=false,er=false,pc='#fbbf24',cs=null;const $=id=>document.getElementById(id);
+D.forEach(d=>{d.st=Array(d.n.length+1).fill(null);d.el.querySelector('.sub').classList.add('hid')});
+const ov=document.createElement('canvas');ov.id='ov';ov.width=2200;ov.height=1238;deck.appendChild(ov);const oc=ov.getContext('2d');oc.scale(2,2);
+function redraw(){oc.clearRect(0,0,1100,619);(D[cur].pen||[]).forEach(s=>{oc.globalCompositeOperation=s.e?'destination-out':'source-over';oc.strokeStyle=s.c;oc.lineWidth=s.e?28:s.w;oc.lineCap=oc.lineJoin='round';oc.beginPath();s.p.forEach((q,i)=>i?oc.lineTo(q[0],q[1]):oc.moveTo(q[0],q[1]));if(s.p.length==1)oc.lineTo(s.p[0][0]+.1,s.p[0][1]);oc.stroke()});oc.globalCompositeOperation='source-over'}
+const pt=e=>{const r=ov.getBoundingClientRect();return[(e.clientX-r.left)/r.width*1100,(e.clientY-r.top)/r.height*619]};
+ov.onpointerdown=e=>{if(!pen)return;ov.setPointerCapture(e.pointerId);const d=D[cur];(d.pen=d.pen||[]).push(cs={c:pc,w:5,e:er,p:[pt(e)]});redraw()};
+ov.onpointermove=e=>{if(cs){cs.p.push(pt(e));redraw()}};ov.onpointerup=ov.onpointercancel=()=>cs=null;
+function ui(){ov.classList.toggle('on',pen);$('pb').classList.toggle('on',pen&&!er);$('eb').classList.toggle('on',pen&&er);[...$('sw').children].forEach(x=>x.classList.toggle('on',x.dataset.c==pc&&pen&&!er))}
+['#6366f1','#a855f7','#ec4899','#67e8f9','#34d399','#fbbf24','#eef0ff'].forEach(c=>{const x=document.createElement('span');x.className='swc';x.style.background=c;x.dataset.c=c;x.onclick=()=>{pc=c;er=false;pen=true;ui()};$('sw').appendChild(x)});
+$('pb').onclick=()=>{if(pen&&!er)pen=false;else{pen=true;er=false}ui()};
+$('eb').onclick=()=>{if(pen&&er)pen=false;else{pen=true;er=true}ui()};
+$('cb').onclick=()=>{D[cur].pen=[];redraw()};
+function step(m){const d=D[cur],T=d.st.length,sb=d.el.querySelector('.sub');
+ if(m==1){const k=d.st.indexOf(null);if(k<0)return;d.st[k]=fr;if(k==T-1)sb.classList.remove('hid')}
+ else if(m==0){let k=T-1;while(k>=0&&d.st[k]==null)k--;if(k<0)return;d.st[k]=null;if(k==T-1)sb.classList.add('hid')}
+ else if(m==2){d.st=d.st.map(v=>v==null?fr-999:v);sb.classList.remove('hid')}
+ else{d.st.fill(null);sb.classList.add('hid')}}
+function go(i){cur=Math.max(0,Math.min(D.length-1,i));D.forEach((d,k)=>{d.el.classList.toggle('on',k==cur);if(k==cur)[...d.el.children].forEach((e,j)=>e.style.animationDelay=j*.08+'s')});$('cn').textContent=ar(`${cur+1} / ${D.length}`);redraw()}
+$('nx').onclick=()=>go(cur+1);$('pv').onclick=()=>go(cur-1);$('s1').onclick=()=>step(1);$('s0').onclick=()=>step(0);$('sa').onclick=()=>step(2);$('sr').onclick=()=>step(3);
+document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',()=>b.blur()));
+deck.addEventListener('click',()=>{if(!pen)step(1)});
+addEventListener('keydown',e=>{const k=e.key;if(k=='ArrowLeft')go(cur+1);else if(k=='ArrowRight')go(cur-1);else if(k==' '||k=='Enter'||k=='ArrowDown'){e.preventDefault();step(1)}else if(k=='ArrowUp')step(0);else if(k=='a'||k=='A')step(2);else if(k=='r'||k=='R')step(3);else if(k=='p'||k=='P')$('pb').click();else if(k=='e'||k=='E')$('eb').click();else if(k=='c'||k=='C')$('cb').click()});
+function fitDeck(){const s=Math.min(innerWidth/1100,(innerHeight-$('nav').offsetHeight-24)/619),w=$('wrap');w.style.width=1100*s+'px';w.style.height=619*s+'px';deck.style.transform=`scale(${s})`}
+addEventListener('resize',fitDeck);fitDeck();if(window.ResizeObserver)new ResizeObserver(fitDeck).observe(document.getElementById('nav'));if(document.fonts)document.fonts.ready.then(fitDeck);
+const at=(f,a,b)=>Math.max(0,Math.min(1,(f-a)/(b-a))),ease=t=>t*t*(3-2*t);
+function marker(x,pts,p,col){if(p<=0)return;const L=[];for(let i=1;i<pts.length;i++)L.push(Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));let R=L.reduce((a,b)=>a+b,0)*p;x.beginPath();x.moveTo(...pts[0]);for(let i=1;i<pts.length&&R>0;i++){const k=Math.min(1,R/L[i-1]);x.lineTo(pts[i-1][0]+(pts[i][0]-pts[i-1][0])*k,pts[i-1][1]+(pts[i][1]-pts[i-1][1])*k);R-=L[i-1]}x.strokeStyle=col;x.lineWidth=3;x.lineCap=x.lineJoin='round';x.shadowColor=col;x.shadowBlur=8;x.stroke();x.shadowBlur=0}
+function board(x,W,H,f,t){x.fillStyle='#0a0a13';x.fillRect(0,0,W,H);x.fillStyle='rgba(255,255,255,.06)';for(let i=14;i<W;i+=26)for(let j=14;j<H;j+=26)x.fillRect(i,j,1.5,1.5);const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'#6366f1');g.addColorStop(.5,'#a855f7');g.addColorStop(1,'#ec4899');x.globalAlpha=.45+.3*Math.sin(f/40);x.strokeStyle=g;x.lineWidth=3;x.strokeRect(2,2,W-4,H-4);x.globalAlpha=1;x.font='500 14px Lemonada,Cairo,sans-serif';x.fillStyle='#8a8aa3';x.textAlign='right';x.direction='ltr';x.fillText(t,W-18,24)}
+function txt(x,s,cx,cy,fs,col,mw,p,font){s=ar(s);const fn=z=>`${font=='m'?500:700} ${z}px ${font=='m'?'Lemonada,':''}Cairo,sans-serif`;x.font=fn(fs);while(x.measureText(s).width>mw&&fs>9){fs--;x.font=fn(fs)}const w=x.measureText(s).width,rtl=/[\u0600-\u06ff]/.test(s);x.fillStyle=col;x.textBaseline='middle';x.direction=rtl?'rtl':'ltr';x.textAlign=rtl?'right':'left';x.fillText(s.slice(0,Math.ceil(s.length*p)),rtl?cx+w/2:cx-w/2,cy)}
+function edge(a,b,g){const dx=b.x-a.x,dy=b.y-a.y,ux=Math.abs(dx)||1e-6,uy=Math.abs(dy)||1e-6,t1=Math.min(a.w/2/ux,a.h/2/uy),t2=Math.min(b.w/2/ux,b.h/2/uy),d=Math.hypot(dx,dy),k=g/d;return[[a.x+dx*t1+dx*k,a.y+dy*t1+dy*k],[b.x-dx*t2-dx*k,b.y-dy*t2-dy*k]]}
+function draw(d,f){
+ const cv=d.cv,r=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;if(!W)return;
+ if(cv.width!=W*r||cv.height!=H*r){cv.width=W*r;cv.height=H*r}
+ const x=cv.getContext('2d');x.setTransform(r,0,0,r,0,0);
+  const col=getComputedStyle(d.el).getPropertyValue('--c').trim();
+ board(x,W,H,f,d.t);
+ const N=d.n.map(n=>({x:n[0]/100*W,y:n[1]/100*H+8,w:n[2]/100*W,h:n[3]/100*H,l:n[4],s:n[5]?n[5].split('|'):[]}));
+ const U=i=>d.st[i]==null?-1:f-d.st[i];
+ N.forEach((n,i)=>{const u=U(i);if(u<0)return;const p=at(u,0,30),X=n.x-n.w/2,Y=n.y-n.h/2;x.save();x.globalAlpha=p>=1?.08+.03*Math.sin(f/25):0;x.fillStyle=col;x.fillRect(X,Y,n.w,n.h);x.restore();marker(x,[[X,Y],[X+n.w,Y],[X+n.w,Y+n.h],[X,Y+n.h],[X,Y]],ease(p),col)});
+ d.a.forEach(a=>{const u=U(Math.max(a[0],a[1]));if(u<0)return;const p=ease(at(u,25,55)),[s,e]=edge(N[a[0]],N[a[1]],7);marker(x,[s,e],p,col);if(p>=1){const an=Math.atan2(e[1]-s[1],e[0]-s[0]);x.beginPath();for(const o of[2.6,-2.6])x.lineTo(e[0]+Math.cos(an+o)*11,e[1]+Math.sin(an+o)*11),x.lineTo(e[0],e[1]);x.strokeStyle=col;x.lineWidth=3;x.stroke()}});
+ N.forEach((n,i)=>{const u=U(i);if(u<0)return;const fs=Math.min(H*.062,n.h>H*.3?27:22),fs2=fs*.66,lh=fs*1.4,lh2=fs2*1.5,tot=lh+n.s.length*lh2,y0=n.y-tot/2+lh/2;
+  txt(x,n.l,n.x,y0,fs,'#eef0ff',n.w*.9,at(u,15,45),'m');
+  n.s.forEach((t,j)=>{x.save();x.globalAlpha=ease(at(u,40+j*8,60+j*8));txt(x,t,n.x,y0+lh/2+lh2*(j+.6),fs2,'#a9a9c4',n.w*.9,1);x.restore()})});
+}
+(function loop(){draw(D[cur],fr++);requestAnimationFrame(loop)})();
+go(0);
+</script>
+</body>
+</html>

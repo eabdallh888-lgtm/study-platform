@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>أنظمة العد والتحويلات — الكشكول</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--c:#e11d48;--hl:#fecdd3;--tp:#1b2340;--ts:#5b5f77;--tm:#a3a5b8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0;background:#3b352e;color:var(--tp);font-family:Cairo,sans-serif;overflow:hidden}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center}
+#wrap{position:relative}
+#deck{width:1100px;height:619px;position:absolute;top:0;left:0;transform-origin:top left;background:#f4ecd6;border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55)}
+#wm{position:absolute;inset:0;z-index:4;pointer-events:none;display:flex;align-items:center;justify-content:center;font:900 230px Cairo,sans-serif;letter-spacing:20px;color:rgba(30,50,120,.07);transform:rotate(-24deg);direction:ltr}
+.slide{position:absolute;inset:0;padding:30px 48px 18px;display:none;flex-direction:column}
+.slide.on{display:flex}
+.c1{--c:#e11d48;--hl:#fecdd3}.c2{--c:#2563eb;--hl:#bfdbfe}.c3{--c:#d97706;--hl:#fde68a}.c4{--c:#059669;--hl:#a7f3d0}.c5{--c:#7c3aed;--hl:#ddd6fe}
+.slide.on>*{animation:ru .6s both}
+@keyframes ru{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.lbl{color:var(--c);font-weight:900;font-size:16px}
+h2{margin:2px 0 0;font:700 44px/1.3 'Aref Ruqaa',Cairo,sans-serif}
+h2 em{font-style:normal;background:linear-gradient(transparent 58%,var(--hl) 58%);padding:0 6px}
+.sub{color:var(--ts);font-size:18px;margin:2px 0 0}
+.sub.hid{visibility:hidden}
+.stage{flex:1;margin:10px 0 8px;min-height:0;border:2px solid rgba(30,40,90,.15);border-radius:10px;overflow:hidden;box-shadow:0 4px 14px rgba(60,40,0,.18)}
+canvas{width:100%;height:100%;display:block}
+.sf{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--tm)}
+.sf span:last-child{color:var(--ts)}
+.pd{display:flex;gap:6px}.pd i{width:7px;height:7px;border-radius:50%;background:#cfc6ab}.pd i.a{background:var(--c);width:20px;border-radius:4px}
+#ov{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none;touch-action:none}
+#ov.on{pointer-events:auto;cursor:crosshair}
+#nav{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;margin-top:8px;max-width:1100px;color:#d8d0bd;font-size:14px}
+#nav button{background:#fbf6e6;color:#1b2340;border:1px solid rgba(0,0,0,.2);border-radius:10px;padding:5px 12px;font:inherit;cursor:pointer}
+#nav button.on{border-color:#2563eb;background:#dbeafe}
+.swc{display:inline-block;width:24px;height:24px;border-radius:50%;margin:0 3px;border:2px solid transparent;cursor:pointer;vertical-align:middle}
+.swc.on{border-color:#fff}
+</style>
+</head>
+<body>
+<div id="wrap"><div id="deck"><div id="wm">ABDU</div></div></div>
+<div id="nav"><button id="pv">السابق ▶</button><span id="cn"></span><button id="nx">◀ التالي</button>
+<button id="s1">▼ إظهار (مسافة)</button><button id="s0">▲ إخفاء</button><button id="sa">إظهار الكل</button><button id="sr">إعادة</button>
+<button id="pb">✏️ قلم</button><span id="sw"></span><button id="eb">🧽 ممحاة</button><button id="cb">مسح الرسم</button></div>
+<script>
+const ar=s=>String(s);const iso=s=>/[\u0600-\u06ff]/.test(s)?String(s).replace(/[(0-9A-Za-z][0-9A-Za-z()₀-₉⁰-⁹=+×÷ ,.\-–:]*[0-9A-Za-z)₀-₉⁰-⁹]|[0-9A-Za-z]/g,m=>'\u2066'+m+'\u2069'):String(s);
+// n: [x%,y%,w%,h%,label,sub('|' = سطر)]  a: [من,إلى]
+const D=[{"c": 1, "l": "MIS — نظم المعلومات الإدارية", "h": "أنظمة العد <em>والتحويلات</em>", "s": "يغطي هذا الدليل أنظمة العد الثنائية والعشرية والثمانية والسداسية عشر مع حل كل تمارين السبورة خطوة بخطوة", "f": "نبدأ بالأنظمة الأربعة", "t": "Number Systems", "n": [[52.81, 58.16, 60, 52, "Number Systems & Base Conversions", "أنظمة العد والتحويلات الحسابية|دليل المذاكرة المعتمد", "bits", "", ""]], "a": []}, {"c": 1, "l": "الأنظمة العددية الرئيسية", "h": "أربعة أنظمة <em>للعد</em>", "s": "لكل نظام أساس وأرقام خاصة به", "f": "والسداسي عشر ليه حروف", "t": "Number Systems", "n": [[88.25, 56.54, 21, 52, "النظام الثنائي", "Binary System (B.N)|الأساس 2|الأرقام: 0 , 1|مثال: (101100)₂", "bits", "s", ""], [66.39, 56.54, 21, 52, "النظام الثماني", "Octal System (O.N)|الأساس 8|الأرقام: من 0 إلى 7|مثال: (235)₈", "stack", "s", ""], [44.54, 56.54, 21, 52, "النظام العشري", "Decimal System (D.N)|الأساس 10|الأرقام: من 0 إلى 9|مثال: (25)₁₀", "coin", "s", ""], [22.68, 56.54, 21, 52, "السداسي عشر", "Hexadecimal (H.D.N)|الأساس 16|الأرقام 0-9 + الحروف A-F|مثال: (A9)₁₆", "gear2", "s", ""]], "a": []}, {"c": 1, "l": "النظام السداسي عشر", "h": "حروف <em>A إلى F</em>", "s": "الأساس 16: الأرقام من 0 إلى 9 بالإضافة للحروف", "f": "نتعلم التحويل الأول", "t": "Hexadecimal", "n": [[52.81, 24.23, 80, 8, "الأرقام 0 – 9 بالإضافة للحروف A – F", "", "", "w", ""], [52.81, 46.04, 80, 14, "A B C D E F", "10|11|12|13|14|15", "", "q", "b"], [52.81, 73.51, 50, 20, "مثال من السبورة", "(A9)₁₆ — الأساس 16", "", "s", ""]], "a": []}, {"c": 2, "l": "قاعدة التحويل 1", "h": "من الثنائي <em>إلى العشري</em>", "s": "نضرب كل خانة ثنائية في القوة المناسبة للأساس 2 حسب موقعها من اليمين إلى اليسار ثم نجمع النواتج", "f": "والعكس: عشري لثنائي", "t": "Binary to Decimal", "n": [[52.81, 23.42, 90, 8, "مثال السبورة: (11001)₂", "", "", "w", ""], [52.81, 39.58, 60, 14, "1 1 0 0 1", "2⁴=16|2³=8|2²=4|2¹=2|2⁰=1", "", "q", ""], [52.81, 58.16, 95, 8, "(1×2⁴) + (1×2³) + (0×2²) + (0×2¹) + (1×2⁰)", "", "", "w", ""], [52.81, 66.24, 60, 8, "= 16 + 8 + 0 + 0 + 1", "", "", "w", ""], [52.81, 77.54, 60, 8, "(11001)₂ = (25)₁₀", "", "", "w", 1]], "a": []}, {"c": 2, "l": "قاعدة التحويل 2", "h": "من العشري <em>إلى الثنائي</em>", "s": "نقسم على 2 باستمرار ونحتفظ بالباقي في كل خطوة ثم نقرأ الباقي من الأسفل إلى الأعلى", "f": "وبعدها الجمع الثنائي", "t": "Decimal to Binary", "n": [[52.81, 21.65, 90, 8, "مثال السبورة: نحوّل (25)₁₀ إلى ثنائي", "", "", "w", ""], [52.81, 27.3, 40, 5, "25 ÷ 2 = 12", "1", "", "r", ""], [52.81, 32.15, 40, 5, "12 ÷ 2 = 6", "0", "", "r", ""], [52.81, 37.0, 40, 5, "6 ÷ 2 = 3", "0", "", "r", ""], [52.81, 41.84, 40, 5, "3 ÷ 2 = 1", "1", "", "r", ""], [52.81, 46.69, 40, 5, "1 ÷ 2 = 0", "1", "", "r", ""], [52.81, 64.62, 60, 14, "1 1 0 0 1", "", "", "q", "g"], [52.81, 79.16, 60, 8, "(25)₁₀ = (11001)₂", "", "", "w", 1]], "a": [[69, 46.7, 69, 27.3, 6]]}, {"c": 2, "l": "الجمع في النظام الثنائي", "h": "جمع <em>ثنائي</em>", "s": "نطابق مع العشري: 2 + 3 = 5 ومكافئه الثنائي 101", "f": "نحل تمارين السبورة", "t": "Binary Addition", "n": [[52.81, 21.81, 70, 8, "(10)₂ + (11)₂ = (101)₂", "", "", "w", ""], [52.5, 33.12, 60, 14, "1 0", "", "", "q", ""], [52.5, 50.08, 60, 14, "1 1", "", "", "q", ""], [27.27, 50.08, 8, 8, "+", "", "", "o", ""], [47.5, 71.08, 60, 14, "1 0 1", "", "", "q", "g"], [27.27, 71.08, 8, 8, "=", "", "", "o", ""], [88.56, 50.08, 22, 34, "المطابقة مع العشري", "(10)₂ = 2|(11)₂ = 3|المجموع = 5 = (101)₂", "", "s", ""]], "a": []}, {"c": 3, "l": "حل تمارين السبورة", "h": "السؤال <em>الأول</em>", "s": "نقرأ الباقي من الأسفل لأعلى فنحصل على 11000100", "f": "ثم السؤال الثاني", "t": "Exercise 1", "n": [[86.52, 42.0, 22, 34, "السؤال الأول", "تحويل العدد العشري|(196)₁₀ إلى النظام الثنائي", "", "s", ""], [49.74, 22.46, 40, 5, "1.   196 ÷ 2 = 98", "0", "", "r", ""], [49.74, 27.3, 40, 5, "2.   98 ÷ 2 = 49", "0", "", "r", ""], [49.74, 32.15, 40, 5, "3.   49 ÷ 2 = 24", "1", "", "r", ""], [49.74, 37.0, 40, 5, "4.   24 ÷ 2 = 12", "0", "", "r", ""], [49.74, 41.84, 40, 5, "5.   12 ÷ 2 = 6", "0", "", "r", ""], [49.74, 46.69, 40, 5, "6.   6 ÷ 2 = 3", "0", "", "r", ""], [49.74, 51.53, 40, 5, "7.   3 ÷ 2 = 1", "1", "", "r", ""], [49.74, 56.38, 40, 5, "8.   1 ÷ 2 = 0", "1", "", "r", ""], [52.81, 69.47, 60, 14, "1 1 0 0 0 1 0 0", "", "", "q", "g"], [52.81, 81.58, 60, 8, "(196)₁₀ = (11000100)₂ ✓", "", "", "w", 1], [17.77, 80.45, 30, 6, "آخر خانة من اليسار ↑", "", "", "w", 18], [87.84, 80.45, 30, 6, "أول خانة من اليمين ↑", "", "", "w", 18]], "a": [[68.5, 56.4, 68.5, 22.4, 9]]}, {"c": 3, "l": "السؤال الثاني: تحويل العدد الثنائي (1001100)₂ إلى النظام العشري", "h": "السؤال <em>الثاني</em>", "s": "نجمع القيم التي فوقها 1 فقط: 64 + 8 + 4 = 76", "f": "نراجع كل حاجة", "t": "Exercise 2", "n": [[52.81, 34.73, 60, 14, "1 0 0 1 1 0 0", "2⁶=64|2⁵=32|2⁴=16|2³=8|2²=4|2¹=2|2⁰=1", "", "q", "", "الخانة 6|الخانة 5|الخانة 4|الخانة 3|الخانة 2|الخانة 1|الخانة 0"], [52.81, 55.74, 60, 14, "64 0 0 8 4 0 0", "1×64|0×32|0×16|1×8|1×4|0×2|0×1", "", "q", ""], [52.81, 71.89, 60, 8, "المجموع: 64 + 8 + 4 = 76", "", "", "w", ""], [52.81, 81.58, 60, 8, "(1001100)₂ = (76)₁₀ ✓", "", "", "w", 1]], "a": []}, {"c": 5, "l": "ملخص", "h": "الثنائي <em>⇄ العشري</em>", "s": "قسمة ونقرأ الباقي… أو ضرب ونجمع", "f": "ارسمها بقلمك", "t": "Recap", "n": [[77.83, 36.35, 30, 34, "من العشري إلى الثنائي", "قسمة متكررة على 2|نقرأ الباقي من الأسفل لأعلى", "stack", "s", ""], [27.78, 36.35, 30, 34, "من الثنائي إلى العشري", "نضرب كل خانة في 2 أس موقعها|ثم نجمع النواتج", "bits", "s", ""], [77.83, 71.08, 30, 30, "السؤال الأول", "(196)₁₀ = (11000100)₂", "", "s", ""], [27.78, 71.08, 30, 30, "السؤال الثاني", "(1001100)₂ = (76)₁₀", "", "s", ""]], "a": []}];
+const deck=document.getElementById('deck');
+D.forEach((d,i)=>{
+ const s=document.createElement('div');s.className='slide c'+d.c;
+ s.innerHTML=(`<div class="lbl">${iso(d.l)}</div><h2>${ar(d.h)}</h2><p class="sub">${iso(d.s)}</p><div class="stage"><canvas></canvas></div><div class="sf"><span>ABDU · أنظمة العد والتحويلات</span><div class="pd">${D.map((_,k)=>`<i class="${k==i?'a':''}"></i>`).join('')}</div><span>${iso(d.f)}</span></div>`);
+ deck.appendChild(s);d.el=s;d.cv=s.querySelector('canvas');
+});
+let cur=0,fr=0,pen=false,er=false,pc='#1d4ed8',cs=null;const $=id=>document.getElementById(id);
+D.forEach(d=>{d.st=Array(d.n.length+1).fill(null);d.el.querySelector('.sub').classList.add('hid')});
+const ov=document.createElement('canvas');ov.id='ov';ov.width=2200;ov.height=1238;deck.appendChild(ov);const oc=ov.getContext('2d');oc.scale(2,2);
+function redraw(){oc.clearRect(0,0,1100,619);(D[cur].pen||[]).forEach(s=>{oc.globalCompositeOperation=s.e?'destination-out':'source-over';oc.strokeStyle=s.c;oc.lineWidth=s.e?28:s.w;oc.lineCap=oc.lineJoin='round';oc.beginPath();s.p.forEach((q,i)=>i?oc.lineTo(q[0],q[1]):oc.moveTo(q[0],q[1]));if(s.p.length==1)oc.lineTo(s.p[0][0]+.1,s.p[0][1]);oc.stroke()});oc.globalCompositeOperation='source-over'}
+const pt=e=>{const r=ov.getBoundingClientRect();return[(e.clientX-r.left)/r.width*1100,(e.clientY-r.top)/r.height*619]};
+ov.onpointerdown=e=>{if(!pen)return;ov.setPointerCapture(e.pointerId);const d=D[cur];(d.pen=d.pen||[]).push(cs={c:pc,w:5,e:er,p:[pt(e)]});redraw()};
+ov.onpointermove=e=>{if(cs){cs.p.push(pt(e));redraw()}};ov.onpointerup=ov.onpointercancel=()=>cs=null;
+function ui(){ov.classList.toggle('on',pen);$('pb').classList.toggle('on',pen&&!er);$('eb').classList.toggle('on',pen&&er);[...$('sw').children].forEach(x=>x.classList.toggle('on',x.dataset.c==pc&&pen&&!er))}
+['#1d4ed8','#dc2626','#16a34a','#7c3aed','#f59e0b','#ec4899','#111827'].forEach(c=>{const x=document.createElement('span');x.className='swc';x.style.background=c;x.dataset.c=c;x.onclick=()=>{pc=c;er=false;pen=true;ui()};$('sw').appendChild(x)});
+$('pb').onclick=()=>{if(pen&&!er)pen=false;else{pen=true;er=false}ui()};
+$('eb').onclick=()=>{if(pen&&er)pen=false;else{pen=true;er=true}ui()};
+$('cb').onclick=()=>{D[cur].pen=[];redraw()};
+function step(m){const d=D[cur],T=d.st.length,sb=d.el.querySelector('.sub');
+ if(m==1){const k=d.st.indexOf(null);if(k<0)return;d.st[k]=fr;if(k==T-1)sb.classList.remove('hid')}
+ else if(m==0){let k=T-1;while(k>=0&&d.st[k]==null)k--;if(k<0)return;d.st[k]=null;if(k==T-1)sb.classList.add('hid')}
+ else if(m==2){d.st=d.st.map(v=>v==null?fr-999:v);sb.classList.remove('hid')}
+ else{d.st.fill(null);sb.classList.add('hid')}}
+function go(i){cur=Math.max(0,Math.min(D.length-1,i));D.forEach((d,k)=>{d.el.classList.toggle('on',k==cur);if(k==cur)[...d.el.children].forEach((e,j)=>e.style.animationDelay=j*.08+'s')});$('cn').textContent=ar(`${cur+1} / ${D.length}`);redraw()}
+$('nx').onclick=()=>go(cur+1);$('pv').onclick=()=>go(cur-1);$('s1').onclick=()=>step(1);$('s0').onclick=()=>step(0);$('sa').onclick=()=>step(2);$('sr').onclick=()=>step(3);
+document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',()=>b.blur()));
+deck.addEventListener('click',()=>{if(!pen)step(1)});
+addEventListener('keydown',e=>{const k=e.key;if(k=='ArrowLeft')go(cur+1);else if(k=='ArrowRight')go(cur-1);else if(k==' '||k=='Enter'||k=='ArrowDown'){e.preventDefault();step(1)}else if(k=='ArrowUp')step(0);else if(k=='a'||k=='A')step(2);else if(k=='r'||k=='R')step(3);else if(k=='p'||k=='P')$('pb').click();else if(k=='e'||k=='E')$('eb').click();else if(k=='c'||k=='C')$('cb').click()});
+function fitDeck(){const s=Math.min(innerWidth/1100,(innerHeight-$('nav').offsetHeight-24)/619),w=$('wrap');w.style.width=1100*s+'px';w.style.height=619*s+'px';deck.style.transform=`scale(${s})`}
+addEventListener('resize',fitDeck);fitDeck();if(window.ResizeObserver)new ResizeObserver(fitDeck).observe(document.getElementById('nav'));if(document.fonts)document.fonts.ready.then(fitDeck);
+const at=(f,a,b)=>Math.max(0,Math.min(1,(f-a)/(b-a))),ease=t=>t*t*(3-2*t);
+const SH={b:['#8dbbff','#4f86f0','#2c58bd'],o:['#ffd98a','#f4a42a','#bf7408'],g:['#8ee6b0','#3fbf7a','#228a54'],r:['#ff9aa8','#ec4a62','#b52a42'],p:['#d6c2ff','#a583f2','#7a55c9'],w:['#ffffff','#e4e8f2','#bcc3d6'],k:['#a6aebf','#737d91','#4c5465'],y:['#fff08a','#f5d142','#c9a417']};
+function marker(x,pts,p,col){if(p<=0)return;const P=[];for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i],dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1,n=Math.max(1,Math.ceil(L/10));for(let k=(i==1?0:1);k<=n;k++){const t=k/n,o=Math.sin(P.length*1.3+L)*.75;P.push([a[0]+dx*t-dy/L*o,a[1]+dy*t+dx/L*o])}}const m=Math.max(1,Math.floor((P.length-1)*p));x.beginPath();x.moveTo(P[0][0],P[0][1]);for(let i=1;i<=m;i++)x.lineTo(P[i][0],P[i][1]);x.strokeStyle=col;x.lineWidth=2.8;x.lineCap=x.lineJoin='round';x.stroke()}
+function board(x,W,H,t){x.fillStyle='#fbf6e6';x.fillRect(0,0,W,H);x.strokeStyle='rgba(96,150,210,.38)';x.lineWidth=1;for(let y=34;y<H;y+=30){x.beginPath();x.moveTo(0,y);x.lineTo(W,y);x.stroke()}x.strokeStyle='rgba(225,70,70,.55)';x.lineWidth=2;x.beginPath();x.moveTo(W*.955,0);x.lineTo(W*.955,H);x.stroke();for(let y=30;y<H;y+=60){x.beginPath();x.arc(W-14,y,7,0,7);x.fillStyle='#e6ddc2';x.fill();x.strokeStyle='#bdb08c';x.lineWidth=1.5;x.stroke()}x.font='italic 700 14px Cairo,sans-serif';x.fillStyle='#8b8fa8';x.textAlign='left';x.direction='ltr';x.textBaseline='alphabetic';x.fillText(t,16,22)}
+function txt(x,s,cx,cy,fs,col,mw,p,font){s=ar(s);if(/[\u0600-\u06ff]/.test(s))s=s.replace(/[(0-9A-Za-z][0-9A-Za-z()₀-₉⁰-⁹=+×÷ ,.\-–:]*[0-9A-Za-z)₀-₉⁰-⁹]|[0-9A-Za-z]/g,m=>'\u2066'+m+'\u2069');const ak=font=='m'&&!/\d/.test(s),fn=z=>`700 ${z}px ${ak?"'Aref Ruqaa',":''}Cairo,sans-serif`;x.font=fn(fs);while(x.measureText(s).width>mw&&fs>9){fs--;x.font=fn(fs)}const w=x.measureText(s).width,rtl=/[\u0600-\u06ff]/.test(s);x.fillStyle=col;x.textBaseline='middle';x.direction=rtl?'rtl':'ltr';x.textAlign=rtl?'right':'left';x.fillText(s.slice(0,Math.ceil(s.length*p)),rtl?cx+w/2:cx-w/2,cy);return[w,fs]}
+function edge(a,b,g){const dx=b.x-a.x,dy=b.y-a.y,ux=Math.abs(dx)||1e-6,uy=Math.abs(dy)||1e-6,t1=Math.min(a.w/2/ux,a.h/2/uy),t2=Math.min(b.w/2/ux,b.h/2/uy),d=Math.hypot(dx,dy),k=g/d;return[[a.x+dx*t1+dx*k,a.y+dy*t1+dy*k],[b.x-dx*t2-dx*k,b.y-dy*t2-dy*k]]}
+function poly(x,P,fill,st){x.beginPath();P.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.closePath();x.fillStyle=fill;x.fill();x.strokeStyle=st||'rgba(20,30,70,.35)';x.lineWidth=1;x.stroke()}
+function bbox(x,cx,by,a,b,h,c,gh){const S=SH[c],X=[a*.866,a*.5],Y=[-b*.866,b*.5],C=[cx,by-h],B=[C[0]-Y[0],C[1]-Y[1]],Dd=[C[0]-X[0],C[1]-X[1]],A=[B[0]-X[0],B[1]-X[1]],f=(i)=>gh?'rgba(79,134,240,.12)':S[i];poly(x,[Dd,C,[cx,by],[Dd[0],Dd[1]+h]],f(1));poly(x,[B,C,[cx,by],[B[0],B[1]+h]],f(2));poly(x,[A,B,C,Dd],f(0));return[A,X,Y]}
+function sph(x,cx,cy,r,c){const S=SH[c],g=x.createRadialGradient(cx-r*.35,cy-r*.35,r*.1,cx,cy,r);g.addColorStop(0,S[0]);g.addColorStop(1,S[2]);x.beginPath();x.arc(cx,cy,r,0,7);x.fillStyle=g;x.fill()}
+function cyl(x,cx,cy,r,h,c){const S=SH[c],g=x.createLinearGradient(cx-r,0,cx+r,0);g.addColorStop(0,S[0]);g.addColorStop(.5,S[1]);g.addColorStop(1,S[2]);x.beginPath();x.moveTo(cx-r,cy);x.lineTo(cx-r,cy+h);x.ellipse(cx,cy+h,r,r*.45,0,Math.PI,0,true);x.lineTo(cx+r,cy);x.closePath();x.fillStyle=g;x.fill();x.beginPath();x.ellipse(cx,cy,r,r*.45,0,0,7);x.fillStyle=S[0];x.fill();x.strokeStyle='rgba(20,30,70,.3)';x.lineWidth=1;x.stroke()}
+function gearD(x,cx,cy,r,h,c,rot){const S=SH[c],P=[];for(let i=0;i<8;i++){const a=rot+i*Math.PI/4;[[0,.72],[.1,1],[.4,1],[.5,.72]].forEach(([d,k])=>{const t=a+d*Math.PI/4;P.push([cx+Math.cos(t)*k*r,Math.sin(t)*k*r*.5])})}for(let d=h;d>=0;d-=2){x.save();x.translate(0,cy+d);poly(x,P,d?S[2]:S[0]);x.restore()}x.beginPath();x.ellipse(cx,cy,r*.3,r*.15,0,0,7);x.fillStyle=S[2];x.fill()}
+function ill(x,k,cx,cy,s,f,u){
+ x.save();x.fillStyle='rgba(30,40,80,.16)';x.beginPath();x.ellipse(cx,cy+s*.95,s*1.1,s*.28,0,0,7);x.fill();x.restore();
+ const R={
+ factory:()=>{bbox(x,cx+s*.62,cy+s*.5,.35*s,.35*s,1.1*s,'k');bbox(x,cx-s*.15,cy+s*.85,1.3*s,.9*s,.6*s,'b');bbox(x,cx-s*.45,cy+s*.85,.3*s,.25*s,.28*s,'o');for(let j=0;j<3;j++){const t=((f/70)+j/3)%1;x.fillStyle=`rgba(120,130,150,${.55*(1-t)})`;x.beginPath();x.arc(cx+s*.62+t*s*.35,cy-s*.65-t*s*.9,s*(.1+.2*t),0,7);x.fill()}},
+ stack:()=>{bbox(x,cx-.5*s,cy+.9*s,.8*s,.8*s,.6*s,'o');bbox(x,cx+.5*s,cy+.9*s,.8*s,.8*s,.6*s,'o');bbox(x,cx,cy+.4*s,.8*s,.8*s,.6*s,'y')},
+ cube:()=>bbox(x,cx,cy+.85*s,1.1*s,1.1*s,1.1*s,'y'),
+ ghost:()=>{x.setLineDash([5,4]);bbox(x,cx,cy+.85*s,1.1*s,1.1*s,1.1*s,'b',1);x.setLineDash([])},
+ gear:()=>gearD(x,cx,cy+.2*s,.95*s,.35*s,'b',f*.02),
+ gear2:()=>gearD(x,cx,cy+.2*s,.95*s,.35*s,'o',-f*.02),
+ user:()=>{cyl(x,cx,cy+.2*s,.5*s,.6*s,'b');sph(x,cx,cy-.35*s,.4*s,'b')},
+ user2:()=>{cyl(x,cx,cy+.2*s,.5*s,.6*s,'p');sph(x,cx,cy-.35*s,.4*s,'p')},
+ clip:()=>{const[A,X,Y]=bbox(x,cx,cy+.7*s,1.2*s,1.2*s,.15*s,'w');for(let j=0;j<3;j++){const o=.25+.25*j;x.beginPath();x.moveTo(A[0]+X[0]*.2+Y[0]*o,A[1]+X[1]*.2+Y[1]*o);x.lineTo(A[0]+X[0]*.8+Y[0]*o,A[1]+X[1]*.8+Y[1]*o);x.strokeStyle=SH.b[1];x.lineWidth=2;x.stroke()}},
+ chart:()=>{const g=.4+.6*at(u,5,45);bbox(x,cx-.8*s,cy+.9*s,.5*s,.5*s,.6*s*g,'b');bbox(x,cx,cy+.9*s,.5*s,.5*s,1*s*g,'g');bbox(x,cx+.8*s,cy+.9*s,.5*s,.5*s,1.5*s*g,'o')},
+ medal:()=>{cyl(x,cx,cy+.3*s,.8*s,.25*s,'g');x.beginPath();x.moveTo(cx-.3*s,cy+.28*s);x.lineTo(cx-.08*s,cy+.42*s);x.lineTo(cx+.35*s,cy+.15*s);x.strokeStyle='#fff';x.lineWidth=s*.14;x.lineCap='round';x.stroke()},
+ pin:()=>{x.beginPath();x.moveTo(cx-.35*s,cy-.05*s);x.lineTo(cx,cy+.95*s);x.lineTo(cx+.35*s,cy-.05*s);x.fillStyle=SH.r[1];x.fill();sph(x,cx,cy-.3*s,.5*s,'r');x.beginPath();x.arc(cx,cy-.3*s,.17*s,0,7);x.fillStyle='#fff';x.fill()},
+ coin:()=>{for(let j=0;j<3;j++)cyl(x,cx,cy+.45*s-j*.25*s,.75*s,.2*s,'y')},
+ bits:()=>{bbox(x,cx-.95*s,cy+.9*s,.7*s,.7*s,.7*s,'y');bbox(x,cx,cy+.9*s,.7*s,.7*s,.7*s,'w');bbox(x,cx+.95*s,cy+.9*s,.7*s,.7*s,.7*s,'y')},
+ belt:()=>{bbox(x,cx,cy+.8*s,1.7*s,.7*s,.18*s,'k');const C=[cx,cy+.62*s],X=[1.47*s,.85*s],Y=[-.61*s,.35*s],M=[C[0]-(X[0]+Y[0])/2,C[1]-(X[1]+Y[1])/2];for(let j=0;j<3;j++){const t=((f/80)+j/3)%1,q=(t-.5)*1.4*s;bbox(x,M[0]+q*.866,M[1]+q*.5+.1*s,.4*s,.4*s,.4*s,'o')}}
+ };(R[k]||(()=>{}))()}
+const bk=t=>{const c=1.70158,u=t-1;return t>0?1+(c+1)*u*u*u+c*u*u:0};
+const rt=(x,t,r,cy,fs,col,mw,p,fo)=>{const[w]=txt(x,t,0,cy,fs,col,mw,0,fo);return txt(x,t,r-w/2,cy,fs,col,mw,p,fo)};
+function tile(x,cx,cy,w,h,c,lit,t,fs,col){const S=SH[c];x.save();x.fillStyle='rgba(30,40,80,.18)';x.beginPath();x.roundRect(cx-w/2+3,cy-h/2+9,w,h,10);x.fill();x.fillStyle=lit?S[2]:'#c9c3b0';x.beginPath();x.roundRect(cx-w/2,cy-h/2+6,w,h,10);x.fill();x.fillStyle=lit?S[1]:'#fff';x.strokeStyle=lit?S[2]:'#c9c3b0';x.lineWidth=2;x.beginPath();x.roundRect(cx-w/2,cy-h/2,w,h,10);x.fill();x.stroke();if(t!=='')txt(x,t,cx,cy+2,fs,col,w*.9,1,'m');x.restore()}
+function draw(d,f){
+ const cv=d.cv,r=devicePixelRatio||1,cw=cv.clientWidth,ch=cv.clientHeight;if(!cw)return;if(cv.width!=cw*r||cv.height!=ch*r){cv.width=cw*r;cv.height=ch*r}const S=ch/440,W=cw/S,H=440,x=cv.getContext('2d');x.setTransform(r*S,0,0,r*S,0,0);
+ const cs=getComputedStyle(d.el),col=cs.getPropertyValue('--c').trim(),hl=cs.getPropertyValue('--hl').trim(),t0=f-(d.t0||0);
+ board(x,W,H,d.t);
+ const mx=v=>(.03+v/100*.89)*W,mw=v=>v/100*.89*W;
+ const N=d.n.map(n=>({x:mx(n[0]),y:n[1]/100*619-105,w:mw(n[2]),h:n[3]/100*619,l:n[4],s:n[5]?n[5].split('|'):[],i:n[6],t:n[7],e:n[8],p:n[9]?n[9].split('|'):[]}));
+ const U=i=>d.st[i]==null?-1:f-d.st[i];
+ d.a.forEach(a=>{let u,s,e;if(a.length==5){u=U(a[4]);s=[a[0]/100*W,a[1]/100*619-105];e=[a[2]/100*W,a[3]/100*619-105]}else{u=U(Math.max(a[0],a[1]));[s,e]=edge(N[a[0]],N[a[1]],6)}if(u<0)return;
+  const dx=e[0]-s[0],dy=e[1]-s[1],dd=Math.hypot(dx,dy)||1,mxp=(s[0]+e[0])/2-dy/dd*18,myp=(s[1]+e[1])/2+dx/dd*18,P=[];for(let k=0;k<=14;k++){const t=k/14;P.push([(1-t)*(1-t)*s[0]+2*t*(1-t)*mxp+t*t*e[0],(1-t)*(1-t)*s[1]+2*t*(1-t)*myp+t*t*e[1]])}
+  const p=ease(at(u,25,60));marker(x,P,p,'#d62839');if(p>=1){const q=P[13],an=Math.atan2(e[1]-q[1],e[0]-q[0]);x.beginPath();for(const o of[2.6,-2.6])x.lineTo(e[0]+Math.cos(an+o)*12,e[1]+Math.sin(an+o)*12),x.lineTo(e[0],e[1]);x.strokeStyle='#d62839';x.lineWidth=3;x.stroke()}});
+ N.forEach((n,i)=>{const u=U(i);if(u<0)return;const ty=n.t;
+  if(ty=='q'){const T=n.l.split(' '),tw=86,gp=12,th=72,L=n.x-(T.length*(tw+gp)-gp)/2;T.forEach((t,j)=>{const dl=(T.length-1-j)*6,p=bk(at(u,dl,dl+24));if(p<=0)return;const cx=L+j*(tw+gp)+tw/2,lit=n.e?1:t!='0',c=n.e||'y';x.save();x.translate(cx,n.y);x.scale(p,p);x.translate(-cx,-n.y);tile(x,cx,n.y,tw,th,c,lit,t,t.length>2?30:40,!lit?'#8b8fa8':'yo'.includes(c)?'#3b2a00':'#fff');x.restore();if(n.s[j])txt(x,n.s[j],cx,n.y+th/2+26,15,'#27346b',tw+gp,at(u,dl+15,dl+35));if(n.p[j])txt(x,n.p[j],cx,n.y-th/2-16,14,'#a3342f',tw+gp,at(u,dl+15,dl+35))});return}
+  if(ty=='r'){txt(x,n.l,n.x-30,n.y,30,'#14308f',n.w*.7,at(u,0,25),'m');const px=n.x+n.w/2-24,p=bk(at(u,15,36));if(p>0){x.save();x.translate(px,n.y);x.scale(p,p);x.translate(-px,-n.y);tile(x,px,n.y,40,24,'y',1,n.s[0],22,'#3b2a00');x.restore()}return}
+  if(ty=='w'){const res=n.e==1;if(res){const[lw]=txt(x,n.l,0,n.y,32,'#000',n.w*1.2,0,'m'),pr=ease(at(u,0,30));x.save();x.globalAlpha=.9;x.fillStyle=hl;x.fillRect(n.x+lw/2+8-(lw+16)*pr,n.y+2,(lw+16)*pr,16);x.restore()}txt(x,n.l,n.x,n.y,n.e>1?n.e:res?34:30,res||n.e>1?'#d62839':'#14308f',n.w*1.2,at(u,0,35),'m');return}
+  const stk=ty=='s',op=ty=='o',ic=n.i?Math.min(n.h*(stk?.36:.46),stk?84:150):0,fs=26*(op?2.6:stk?.92:1),fs2=fs*.64,lh=fs*1.35,lh2=fs2*1.55,tot=lh+n.s.length*lh2+(ic?ic+8:0),top=n.y-tot/2,icy=top+ic/2,ly=top+(ic?ic+8:0)+lh/2;
+  x.save();
+  if(stk){x.translate(n.x,n.y);x.rotate((i%2?1:-1)*.02);x.translate(-n.x,-n.y);const X0=n.x-n.w/2,Y0=n.y-n.h/2;x.globalAlpha=at(u,0,20);x.fillStyle='rgba(60,40,0,.18)';x.fillRect(X0+3,Y0+4,n.w,n.h);x.fillStyle=hl;x.fillRect(X0,Y0,n.w,n.h);x.fillStyle='rgba(255,255,255,.6)';x.fillRect(n.x-30,Y0-8,60,16)}
+  const pp=at(u,0,25);
+  if(ic){x.save();x.translate(n.x,icy+Math.sin(f/28+i)*3*pp);x.scale(bk(pp),bk(pp));x.translate(-n.x,-icy);ill(x,n.i,n.x,icy,ic/1.8,f,u);x.restore()}
+  if(!op&&!stk){const[lw]=txt(x,n.l,n.x,ly,fs,'#000',n.w*.92,0,'m'),pr=ease(at(u,10,35));x.save();x.globalAlpha=.9;x.fillStyle=hl;x.fillRect(n.x+lw/2+8-(lw+16)*pr,ly-fs*.12,(lw+16)*pr,fs*.44);x.restore()}
+  txt(x,n.l,n.x,ly,fs,op?col:'#14308f',n.w*.92,at(u,15,45),'m');
+  n.s.forEach((t,j)=>txt(x,t,n.x,ly+lh/2+lh2*(j+.6),fs2,'#27346b',n.w*.92,at(u,40+j*8,70+j*8)));
+  x.restore()});
+}
+(function loop(){draw(D[cur],fr++);requestAnimationFrame(loop)})();
+go(0);
+</script>
+</body>
+</html>

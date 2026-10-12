@@ -1,0 +1,107 @@
+[
+ {
+  "id": "eng-kids",
+  "title": "English for Kids — أصوات الحروف والدمج",
+  "cat": "إنجليزي",
+  "emoji": "🦉",
+  "color": "#ff5d8f",
+  "descr": "أصوات الحروف ودمجها بكروت ملونة ونطق صوتي. دوس على الكارت واسمع.",
+  "sort": 1,
+  "items": [
+   {
+    "kind": "deck",
+    "label": "الشرح التفاعلي",
+    "url": "content/decks/english-kids.html"
+   },
+   {
+    "kind": "pdf",
+    "label": "نسخة PDF",
+    "url": "content/pdfs/english-kids.pdf"
+   }
+  ]
+ },
+ {
+  "id": "mis",
+  "title": "نظم المعلومات الإدارية MIS",
+  "cat": "نظم معلومات",
+  "emoji": "🧠",
+  "color": "#a855f7",
+  "descr": "دورة المعالجة ووحدات التخزين ومكونات الحاسب بالرسم على السبورة.",
+  "sort": 2,
+  "items": [
+   {
+    "kind": "deck",
+    "label": "الشرح التفاعلي",
+    "url": "content/decks/mis.html"
+   },
+   {
+    "kind": "pdf",
+    "label": "نسخة PDF",
+    "url": "content/pdfs/mis.pdf"
+   }
+  ]
+ },
+ {
+  "id": "number-systems",
+  "title": "أنظمة العد والتحويلات",
+  "cat": "نظم معلومات",
+  "emoji": "🔢",
+  "color": "#3b82f6",
+  "descr": "الثنائي والعشري والثماني والسداسي عشر وحل التمارين خطوة بخطوة.",
+  "sort": 3,
+  "items": [
+   {
+    "kind": "deck",
+    "label": "الشرح التفاعلي",
+    "url": "content/decks/number-systems.html"
+   },
+   {
+    "kind": "pdf",
+    "label": "نسخة PDF",
+    "url": "content/pdfs/number-systems.pdf"
+   }
+  ]
+ },
+ {
+  "id": "business-analytics",
+  "title": "تحليلات الأعمال",
+  "cat": "إدارة",
+  "emoji": "📊",
+  "color": "#e11d48",
+  "descr": "ماهية تحليلات الأعمال وبيئتها وأهميتها.",
+  "sort": 4,
+  "items": [
+   {
+    "kind": "deck",
+    "label": "الشرح التفاعلي",
+    "url": "content/decks/business-analytics.html"
+   },
+   {
+    "kind": "pdf",
+    "label": "نسخة PDF",
+    "url": "content/pdfs/business-analytics.pdf"
+   }
+  ]
+ },
+ {
+  "id": "production-ops",
+  "title": "إدارة الإنتاج والعمليات",
+  "cat": "إدارة",
+  "emoji": "🏭",
+  "color": "#059669",
+  "descr": "مفهوم الإنتاج والنظام الإنتاجي وقانون الإنتاجية مع مثال محلول.",
+  "sort": 5,
+  "items": [
+   {
+    "kind": "deck",
+    "label": "الشرح التفاعلي",
+    "url": "content/decks/production-ops.html"
+   },
+   {
+    "kind": "pdf",
+    "label": "نسخة PDF",
+    "url": "content/pdfs/production-ops.pdf"
+   }
+  ]
+ }
+]
