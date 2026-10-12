@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>تحليلات الأعمال — شرح في الكشكول</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--c:#e11d48;--hl:#fecdd3;--tp:#1b2340;--ts:#5b5f77;--tm:#a3a5b8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0;background:#3b352e;color:var(--tp);font-family:Cairo,sans-serif;overflow:hidden}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center}
+#wrap{position:relative}
+#deck{width:1100px;height:619px;position:absolute;top:0;left:0;transform-origin:top left;background:#f4ecd6;border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55)}
+#wm{position:absolute;inset:0;z-index:4;pointer-events:none;display:flex;align-items:center;justify-content:center;font:900 230px Cairo,sans-serif;letter-spacing:20px;color:rgba(30,50,120,.07);transform:rotate(-24deg);direction:ltr}
+.slide{position:absolute;inset:0;padding:30px 48px 18px;display:none;flex-direction:column}
+.slide.on{display:flex}
+.c1{--c:#e11d48;--hl:#fecdd3}.c2{--c:#2563eb;--hl:#bfdbfe}.c3{--c:#d97706;--hl:#fde68a}.c4{--c:#059669;--hl:#a7f3d0}.c5{--c:#7c3aed;--hl:#ddd6fe}
+.slide.on>*{animation:ru .6s both}
+@keyframes ru{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.lbl{color:var(--c);font-weight:900;font-size:16px}
+h2{margin:2px 0 0;font:700 44px/1.3 'Aref Ruqaa',Cairo,sans-serif}
+h2 em{font-style:normal;background:linear-gradient(transparent 58%,var(--hl) 58%);padding:0 6px}
+.sub{color:var(--ts);font-size:18px;margin:2px 0 0}
+.sub.hid{visibility:hidden}
+.stage{flex:1;margin:10px 0 8px;min-height:0;border:2px solid rgba(30,40,90,.15);border-radius:10px;overflow:hidden;box-shadow:0 4px 14px rgba(60,40,0,.18)}
+canvas{width:100%;height:100%;display:block}
+.sf{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--tm)}
+.sf span:last-child{color:var(--ts)}
+.pd{display:flex;gap:6px}.pd i{width:7px;height:7px;border-radius:50%;background:#cfc6ab}.pd i.a{background:var(--c);width:20px;border-radius:4px}
+#ov{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none;touch-action:none}
+#ov.on{pointer-events:auto;cursor:crosshair}
+#nav{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;margin-top:8px;max-width:1100px;color:#d8d0bd;font-size:14px}
+#nav button{background:#fbf6e6;color:#1b2340;border:1px solid rgba(0,0,0,.2);border-radius:10px;padding:5px 12px;font:inherit;cursor:pointer}
+#nav button.on{border-color:#2563eb;background:#dbeafe}
+.swc{display:inline-block;width:24px;height:24px;border-radius:50%;margin:0 3px;border:2px solid transparent;cursor:pointer;vertical-align:middle}
+.swc.on{border-color:#fff}
+</style>
+</head>
+<body>
+<div id="wrap"><div id="deck"><div id="wm">ABDU</div></div></div>
+<div id="nav"><button id="pv">السابق ▶</button><span id="cn"></span><button id="nx">◀ التالي</button>
+<button id="s1">▼ إظهار (مسافة)</button><button id="s0">▲ إخفاء</button><button id="sa">إظهار الكل</button><button id="sr">إعادة</button>
+<button id="pb">✏️ قلم</button><span id="sw"></span><button id="eb">🧽 ممحاة</button><button id="cb">مسح الرسم</button></div>
+<script>
+const ar=s=>String(s).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+// n: [x%,y%,w%,h%,label,sub('|' = سطر)]  a: [من,إلى]
+const D=[
+{c:1,l:'مقرر تحليلات الأعمال',h:'تحليلات <em>الأعمال</em>',s:'الفصل الأول: المفاهيم الأساسية في تحليلات الأعمال',f:'نبص الأول على فصول المقرر',t:'Business',
+ n:[[50,50,52,66,'تحليلات الأعمال','مقرر تحليلات الأعمال|محاضرة 24 / 9 / 2026','bars']],a:[]},
+{c:1,l:'مخطط فصول المقرر',h:'٩ فصول <em>في المقرر</em>',s:'الفصول من ١ إلى ٩',f:'واحنا دلوقتي في الفصل الأول',t:'Course Map',
+ n:[[80,20,28,27,'الفصل الأول','المفاهيم الأساسية|في تحليلات الأعمال'],[50,20,28,27,'الفصل الثاني','الطريقة الإحصائية|في التفكير'],[20,20,28,27,'الفصل الثالث','منهجية التحليل الحدي|في تحليل القرار'],[80,50,28,27,'الفصل الرابع','التنبؤ بالطلب (المبيعات)'],[50,50,28,27,'الفصل الخامس','تحليل ربحية المنشأة'],[20,50,28,27,'الفصل السادس','السياسة السعرية (التسعير)'],[80,80,28,27,'الفصل السابع','قرارات المستهلك ونظرية التفضيل|للمستهلك ومدخل الهبات'],[50,80,28,27,'الفصل الثامن','توازن السوق'],[20,80,28,27,'الفصل التاسع','ذكاء الأعمال ودعم|اتخاذ القرار']],a:[]},
+{c:1,l:'عناصر الفصل الأول',h:'٥ عناصر <em>للفصل الأول</em>',s:'الفصل الأول: المفاهيم الأساسية في تحليلات الأعمال',f:'نبدأ بالأول: الماهية',t:'Chapter 1',
+ n:[[88,48,17,56,'ماهية','تحليلات|الأعمال','mag'],[69,48,17,56,'أهمية','تحليلات|الأعمال','target'],[50,48,17,56,'علاقة','علم الاقتصاد|وعلم الإدارة|في منظمات الأعمال','link'],[31,48,17,56,'أنواع','منظمات|الأعمال','build'],[12,48,17,56,'بيئة','الأعمال','globe']],a:[[0,1],[1,2],[2,3],[3,4]]},
+{c:2,l:'أولاً: ماهية تحليلات الأعمال',h:'مفهوم <em>تحليلات الأعمال</em>',s:'العلم الذي يطبّق النظرية الاقتصادية على المشكلات الإدارية',f:'والتعريف له أربعة أبعاد',t:'Concept',
+ n:[[76,40,40,58,'تسميات متعددة','ظهرت تسميات متعددة للعلم:|«التسميات الإدارية» أو|«تصنيفات المشروع»|أو «التصنيفات الأخر»','book'],[28,40,40,58,'التعريف الرئيسي','العلم الذي يهتم بتطبيق النظرية|الاقتصادية على المشكلات الإدارية|سواء واجهت المشروعات العامة|أو الخاصة','bulb'],[28,88,52,13,'النظرية الاقتصادية ← المشكلات الإدارية']],a:[[1,2]]},
+{c:2,l:'أبعاد التعريف',h:'٤ أبعاد <em>للتعريف</em>',s:'جوانب متعددة لتعريف تحليلات الأعمال',f:'نروح لبيئة الأعمال ومشكلاتها',t:'Definition',
+ n:[[74,27,46,42,'1 - الاستفادة من النظرية الاقتصادية','نتائج النظرية وهيكل التحليل الاقتصادي|في القرارات الإدارية: الإنتاجية|والمالية والتسويقية','bulb'],[26,27,46,42,'2 - التخصيص الأمثل للموارد','بين الاستخدامات البديلة','scales'],[74,75,46,42,'3 - التفكير العلمي','تحليل وتقييم العمليات التجارية|وتحديد الحلول المناسبة لتحسينها','mag'],[26,75,46,42,'4 - نظام لتحديد الاحتياجات','تعريف احتياجات المنظمات|والعمل على حل مشكلاتها ومنتجاتها','gear']],a:[]},
+{c:3,l:'بيئة الأعمال والمشكلات الإدارية',h:'أبعاد <em>المشكلات الإدارية</em>',s:'النقاط من ٤ إلى ٦ — والنقطة ٧ في الشريحة الجاية',f:'والنقطة ٧: المسلمات الثلاث',t:'Business Environment',
+ n:[[80,50,27,70,'4 - الأزمات الاقتصادية','تقلبات وتغيرات اقتصادية:|أزمات التضخم والركود|أثّرت على أنشطة المشروعات|ومواجهتها أمر بالغ الأهمية','down'],[50,50,27,70,'5 - التدخل الحكومي','زيادة التدخل في بيئة الأعمال|عبر السياسات الاقتصادية|وإنشاء المشروعات العامة|والحكومية','gov'],[20,50,27,70,'6 - تعدد القرارات','التنبؤ بالطلب والخامات والمبيعات|اختيار الفن الإنتاجي|السياسات التسعيرية والاستثمارات|طويلة الأجل','check']],a:[]},
+{c:3,l:'بيئة الأعمال',h:'المسلمات <em>الثلاث</em>',s:'النقطة ٧: المسلمات الأساسية الثلاث لبيئة الأعمال',f:'نخلّص باستنتاج المقرر',t:'Three Postulates',
+ n:[[50,13,66,14,'7 - المسلمات الأساسية الثلاث لبيئة الأعمال'],[80,62,27,54,'التغير وعدم الثبات','المسلمة الأولى','down'],[50,62,27,54,'التعقد','المسلمة الثانية','gear'],[20,62,27,54,'التفاعل والتداخل','بين المتغيرات|المسلمة الثالثة','link']],a:[[0,1],[0,2],[0,3]]},
+{c:3,l:'الاستنتاج',h:'الاستنتاج <em>المحوري</em>',s:'للمقرر كله في جملة',f:'ننتقل لأهمية تحليلات الأعمال',t:'Key Conclusion',
+ n:[[50,50,72,62,'الاستنتاج المحوري للمقرر','يسلط المقرر الضوء على كيفية اتخاذ القرارات|باستخدام وسائل التحليل الاقتصادي وتسخير|النظرية الاقتصادية لإيجاد الحلول المناسبة|للمشكلات الإدارية في المنشأة','target']],a:[]},
+{c:4,l:'ثانياً: أهمية تحليلات الأعمال',h:'الأهمية <em>١ إلى ٣</em>',s:'ليه نحتاج تحليلات الأعمال؟',f:'وفي عنصرين كمان',t:'Importance 1-3',
+ n:[[80,50,27,70,'1 - النمو والمنافسة','نمو حجم المشروعات العامة والخاصة|من المنافسة السعرية إلى غير السعرية|(جودة المنتجات)|والدعاية والإعلان والترويج','up'],[50,50,27,70,'2 - تغير الأسواق','العولمة الاقتصادية دفعت الأسواق|من منافسة لصالح المستهلكين|إلى أسواق شبه احتكارية|لصالح المنتجين','globe'],[20,50,27,70,'3 - ترابط الوظائف','الإنتاج والتسويق والأفراد|والتمويل مرتبطة ببعضها|البعض داخل المنشأة','link']],a:[]},
+{c:4,l:'أهمية تحليلات الأعمال',h:'الأهمية <em>٤ و ٥</em>',s:'العنصران الأخيران',f:'نختم الرحلة',t:'Importance 4-5',
+ n:[[74,50,44,60,'4 - ترشيد اتخاذ القرارات','قرارات أكثر عقلانية وفاعلية|لحل المشكلات الإدارية التي تواجه|المدراء أو الإدارة العليا','check'],[26,50,44,60,'5 - رسم السياسات الإدارية','وضع السياسات الإدارية|على أسس علمية وموضوعية','flag']],a:[[0,1]]},
+{c:5,l:'ختام',h:'رحلتنا <em>لحد دلوقتي</em>',s:'ارسم الرحلة دي بقلمك في الكشكول',f:'ابدأ من الماهية… وارسم',t:'Recap',
+ n:[[84,38,20,46,'الماهية','تعريف تحليلات|الأعمال','mag'],[61,38,20,46,'بيئة الأعمال','المشكلات|والمسلمات الثلاث','globe'],[38,38,20,46,'الاستنتاج','المحوري للمقرر','target'],[15,38,20,46,'الأهمية','٥ عناصر','flag'],[50,84,80,18,'لسه جاي: علاقة علم الاقتصاد وعلم الإدارة — أنواع منظمات الأعمال']],a:[[0,1],[1,2],[2,3],[3,4]]}
+];
+const deck=document.getElementById('deck');
+D.forEach((d,i)=>{
+ const s=document.createElement('div');s.className='slide c'+d.c;
+ s.innerHTML=(`<div class="lbl">${ar(d.l)}</div><h2>${ar(d.h)}</h2><p class="sub">${ar(d.s)}</p><div class="stage"><canvas></canvas></div><div class="sf"><span>ABDU · تحليلات الأعمال</span><div class="pd">${D.map((_,k)=>`<i class="${k==i?'a':''}"></i>`).join('')}</div><span>${ar(d.f)}</span></div>`);
+ deck.appendChild(s);d.el=s;d.cv=s.querySelector('canvas');
+});
+let cur=0,fr=0,pen=false,er=false,pc='#1d4ed8',cs=null;const $=id=>document.getElementById(id);
+D.forEach(d=>{d.st=Array(d.n.length+1).fill(null);d.el.querySelector('.sub').classList.add('hid')});
+const ov=document.createElement('canvas');ov.id='ov';ov.width=2200;ov.height=1238;deck.appendChild(ov);const oc=ov.getContext('2d');oc.scale(2,2);
+function redraw(){oc.clearRect(0,0,1100,619);(D[cur].pen||[]).forEach(s=>{oc.globalCompositeOperation=s.e?'destination-out':'source-over';oc.strokeStyle=s.c;oc.lineWidth=s.e?28:s.w;oc.lineCap=oc.lineJoin='round';oc.beginPath();s.p.forEach((q,i)=>i?oc.lineTo(q[0],q[1]):oc.moveTo(q[0],q[1]));if(s.p.length==1)oc.lineTo(s.p[0][0]+.1,s.p[0][1]);oc.stroke()});oc.globalCompositeOperation='source-over'}
+const pt=e=>{const r=ov.getBoundingClientRect();return[(e.clientX-r.left)/r.width*1100,(e.clientY-r.top)/r.height*619]};
+ov.onpointerdown=e=>{if(!pen)return;ov.setPointerCapture(e.pointerId);const d=D[cur];(d.pen=d.pen||[]).push(cs={c:pc,w:5,e:er,p:[pt(e)]});redraw()};
+ov.onpointermove=e=>{if(cs){cs.p.push(pt(e));redraw()}};ov.onpointerup=ov.onpointercancel=()=>cs=null;
+function ui(){ov.classList.toggle('on',pen);$('pb').classList.toggle('on',pen&&!er);$('eb').classList.toggle('on',pen&&er);[...$('sw').children].forEach(x=>x.classList.toggle('on',x.dataset.c==pc&&pen&&!er))}
+['#1d4ed8','#dc2626','#16a34a','#7c3aed','#f59e0b','#ec4899','#111827'].forEach(c=>{const x=document.createElement('span');x.className='swc';x.style.background=c;x.dataset.c=c;x.onclick=()=>{pc=c;er=false;pen=true;ui()};$('sw').appendChild(x)});
+$('pb').onclick=()=>{if(pen&&!er)pen=false;else{pen=true;er=false}ui()};
+$('eb').onclick=()=>{if(pen&&er)pen=false;else{pen=true;er=true}ui()};
+$('cb').onclick=()=>{D[cur].pen=[];redraw()};
+function step(m){const d=D[cur],T=d.st.length,sb=d.el.querySelector('.sub');
+ if(m==1){const k=d.st.indexOf(null);if(k<0)return;d.st[k]=fr;if(k==T-1)sb.classList.remove('hid')}
+ else if(m==0){let k=T-1;while(k>=0&&d.st[k]==null)k--;if(k<0)return;d.st[k]=null;if(k==T-1)sb.classList.add('hid')}
+ else if(m==2){d.st=d.st.map(v=>v==null?fr-999:v);sb.classList.remove('hid')}
+ else{d.st.fill(null);sb.classList.add('hid')}}
+function go(i){cur=Math.max(0,Math.min(D.length-1,i));D.forEach((d,k)=>{d.el.classList.toggle('on',k==cur);if(k==cur)[...d.el.children].forEach((e,j)=>e.style.animationDelay=j*.08+'s')});$('cn').textContent=ar(`${cur+1} / ${D.length}`);redraw()}
+$('nx').onclick=()=>go(cur+1);$('pv').onclick=()=>go(cur-1);$('s1').onclick=()=>step(1);$('s0').onclick=()=>step(0);$('sa').onclick=()=>step(2);$('sr').onclick=()=>step(3);
+document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',()=>b.blur()));
+deck.addEventListener('click',()=>{if(!pen)step(1)});
+addEventListener('keydown',e=>{const k=e.key;if(k=='ArrowLeft')go(cur+1);else if(k=='ArrowRight')go(cur-1);else if(k==' '||k=='Enter'||k=='ArrowDown'){e.preventDefault();step(1)}else if(k=='ArrowUp')step(0);else if(k=='a'||k=='A')step(2);else if(k=='r'||k=='R')step(3);else if(k=='p'||k=='P')$('pb').click();else if(k=='e'||k=='E')$('eb').click();else if(k=='c'||k=='C')$('cb').click()});
+function fitDeck(){const s=Math.min(innerWidth/1100,(innerHeight-$('nav').offsetHeight-24)/619),w=$('wrap');w.style.width=1100*s+'px';w.style.height=619*s+'px';deck.style.transform=`scale(${s})`}
+addEventListener('resize',fitDeck);fitDeck();if(window.ResizeObserver)new ResizeObserver(fitDeck).observe(document.getElementById('nav'));if(document.fonts)document.fonts.ready.then(fitDeck);
+const ICO={bars:[[[-.8,.8],[.8,.8]],[[-.6,.8],[-.6,.1],[-.2,.1],[-.2,.8]],[[-.05,.8],[-.05,-.3],[.35,-.3],[.35,.8]],[[.5,.8],[.5,-.8],[.9,-.8],[.9,.8]]],scales:[[[0,-.8],[0,.8]],[[-.5,.8],[.5,.8]],[[-.8,-.4],[.8,-.4]],[[-.8,-.4],[-1,.2],[-.6,.2],[-.8,-.4]],[[.8,-.4],[.6,.2],[1,.2],[.8,-.4]]],build:[[[-.7,.8],[-.7,-.6],[.7,-.6],[.7,.8],[-.7,.8]],[[-.4,-.3],[-.2,-.3],[-.2,-.1],[-.4,-.1],[-.4,-.3]],[[.2,-.3],[.4,-.3],[.4,-.1],[.2,-.1],[.2,-.3]],[[-.1,.8],[-.1,.3],[.1,.3],[.1,.8]]],gov:[[[-.9,-.3],[0,-.9],[.9,-.3],[-.9,-.3]],[[-.9,.8],[.9,.8]],[[-.6,-.2],[-.6,.7]],[[-.2,-.2],[-.2,.7]],[[.2,-.2],[.2,.7]],[[.6,-.2],[.6,.7]]],down:[[[-.9,-.6],[-.4,-.1],[-.1,-.3],[.3,.4],[.9,.7]],[[.9,.7],[.65,.65]],[[.9,.7],[.85,.4]]],up:[[[-.9,.7],[-.3,.1],[0,.3],[.5,-.4],[.9,-.7]],[[.9,-.7],[.6,-.7]],[[.9,-.7],[.85,-.4]]],gear:[[[-.3,-.7],[.3,-.7],[.7,-.3],[.7,.3],[.3,.7],[-.3,.7],[-.7,.3],[-.7,-.3],[-.3,-.7]],[[-.25,-.25],[.25,-.25],[.25,.25],[-.25,.25],[-.25,-.25]]],link:[[[-.9,-.3],[-.1,-.3],[-.1,.3],[-.9,.3],[-.9,-.3]],[[.1,-.3],[.9,-.3],[.9,.3],[.1,.3],[.1,-.3]],[[-.1,0],[.1,0]]],bulb:[[[-.4,-.8],[.4,-.8],[.6,-.3],[.3,.2],[-.3,.2],[-.6,-.3],[-.4,-.8]],[[-.25,.45],[.25,.45]],[[-.15,.75],[.15,.75]]],target:[[[0,-.9],[.9,0],[0,.9],[-.9,0],[0,-.9]],[[0,-.45],[.45,0],[0,.45],[-.45,0],[0,-.45]],[[.1,-.1],[.9,-.8]]],mag:[[[-.3,-.8],[.3,-.8],[.6,-.5],[.6,.1],[.3,.4],[-.3,.4],[-.6,.1],[-.6,-.5],[-.3,-.8]],[[.35,.4],[.9,.9]]],book:[[[-.9,-.6],[0,-.4],[.9,-.6],[.9,.6],[0,.8],[-.9,.6],[-.9,-.6]],[[0,-.4],[0,.8]]],check:[[[-.7,0],[-.2,.5],[.7,-.5]]],flag:[[[-.6,.9],[-.6,-.8]],[[-.6,-.8],[.7,-.5],[-.6,-.1]]],globe:[[[-.3,-.8],[.3,-.8],[.7,-.3],[.7,.3],[.3,.7],[-.3,.7],[-.7,.3],[-.7,-.3],[-.3,-.8]],[[-.7,0],[.7,0]],[[0,-.7],[0,.7]]]};
+const at=(f,a,b)=>Math.max(0,Math.min(1,(f-a)/(b-a))),ease=t=>t*t*(3-2*t);
+function marker(x,pts,p,col){if(p<=0)return;const P=[];for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i],dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1,n=Math.max(1,Math.ceil(L/10));for(let k=(i==1?0:1);k<=n;k++){const t=k/n,o=Math.sin(P.length*1.3+L)*.75;P.push([a[0]+dx*t-dy/L*o,a[1]+dy*t+dx/L*o])}}const m=Math.max(1,Math.floor((P.length-1)*p));x.beginPath();x.moveTo(P[0][0],P[0][1]);for(let i=1;i<=m;i++)x.lineTo(P[i][0],P[i][1]);x.strokeStyle=col;x.lineWidth=2.8;x.lineCap=x.lineJoin='round';x.stroke()}
+function board(x,W,H,t){x.fillStyle='#fbf6e6';x.fillRect(0,0,W,H);x.strokeStyle='rgba(96,150,210,.38)';x.lineWidth=1;for(let y=34;y<H;y+=30){x.beginPath();x.moveTo(0,y);x.lineTo(W,y);x.stroke()}x.strokeStyle='rgba(225,70,70,.55)';x.lineWidth=2;x.beginPath();x.moveTo(W*.955,0);x.lineTo(W*.955,H);x.stroke();for(let y=30;y<H;y+=60){x.beginPath();x.arc(W-14,y,7,0,7);x.fillStyle='#e6ddc2';x.fill();x.strokeStyle='#bdb08c';x.lineWidth=1.5;x.stroke()}x.font='italic 700 14px Cairo,sans-serif';x.fillStyle='#8b8fa8';x.textAlign='left';x.direction='ltr';x.textBaseline='alphabetic';x.fillText(t,16,22)}
+function txt(x,s,cx,cy,fs,col,mw,p,font){s=ar(s);const fn=z=>`700 ${z}px ${font=='m'?"'Aref Ruqaa',":''}Cairo,sans-serif`;x.font=fn(fs);while(x.measureText(s).width>mw&&fs>9){fs--;x.font=fn(fs)}const w=x.measureText(s).width,rtl=/[\u0600-\u06ff]/.test(s);x.fillStyle=col;x.textBaseline='middle';x.direction=rtl?'rtl':'ltr';x.textAlign=rtl?'right':'left';x.fillText(s.slice(0,Math.ceil(s.length*p)),rtl?cx+w/2:cx-w/2,cy)}
+function edge(a,b,g){const dx=b.x-a.x,dy=b.y-a.y,ux=Math.abs(dx)||1e-6,uy=Math.abs(dy)||1e-6,t1=Math.min(a.w/2/ux,a.h/2/uy),t2=Math.min(b.w/2/ux,b.h/2/uy),d=Math.hypot(dx,dy),k=g/d;return[[a.x+dx*t1+dx*k,a.y+dy*t1+dy*k],[b.x-dx*t2-dx*k,b.y-dy*t2-dy*k]]}
+function draw(d,f){
+ const cv=d.cv,r=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;if(!W)return;
+ if(cv.width!=W*r||cv.height!=H*r){cv.width=W*r;cv.height=H*r}
+ const x=cv.getContext('2d');x.setTransform(r,0,0,r,0,0);
+ const cs=getComputedStyle(d.el),col=cs.getPropertyValue('--c').trim(),hl=cs.getPropertyValue('--hl').trim();
+ board(x,W,H,d.t);
+ const mx=v=>(.03+v/100*.89)*W,mw=v=>v/100*.89*W;
+ const N=d.n.map(n=>({x:mx(n[0]),y:n[1]/100*H+8,w:mw(n[2]),h:n[3]/100*H,l:n[4],s:n[5]?n[5].split('|'):[],i:n[6]}));
+ const U=i=>d.st[i]==null?-1:f-d.st[i];
+ N.forEach((n,i)=>{const u=U(i);if(u<0)return;const X=n.x-n.w/2,Y=n.y-n.h/2;x.save();x.globalAlpha=.6*at(u,10,40);x.fillStyle=hl;x.fillRect(X,Y,n.w,n.h);x.restore();marker(x,[[X,Y],[X+n.w,Y],[X+n.w,Y+n.h],[X,Y+n.h],[X,Y]],ease(at(u,0,30)),col)});
+ d.a.forEach(a=>{const u=U(Math.max(a[0],a[1]));if(u<0)return;const p=ease(at(u,25,55)),[s,e]=edge(N[a[0]],N[a[1]],7);marker(x,[s,e],p,col);if(p>=1){const an=Math.atan2(e[1]-s[1],e[0]-s[0]);x.beginPath();for(const o of[2.6,-2.6])x.lineTo(e[0]+Math.cos(an+o)*11,e[1]+Math.sin(an+o)*11),x.lineTo(e[0],e[1]);x.strokeStyle=col;x.lineWidth=2.8;x.stroke()}});
+ N.forEach((n,i)=>{const u=U(i);if(u<0)return;const ic=n.i?Math.min(n.h*.34,54):0,fs=Math.min(H*.062,n.h>H*.3?27:22)*1.08,fs2=fs*.62,lh=fs*1.35,lh2=fs2*1.55,tot=lh+n.s.length*lh2+(ic?ic+6:0),top=n.y-tot/2,ly=top+(ic?ic+6:0)+lh/2;
+  if(ic)(ICO[n.i]||[]).forEach(q=>marker(x,q.map(a=>[n.x+a[0]*ic/2,top+ic/2+a[1]*ic/2]),at(u,10,50),col));
+  txt(x,n.l,n.x,ly,fs,'#1b2340',n.w*.9,at(u,15,45),'m');
+  n.s.forEach((t,j)=>{x.save();x.globalAlpha=ease(at(u,40+j*8,60+j*8));txt(x,t,n.x,ly+lh/2+lh2*(j+.6),fs2,'#3d4260',n.w*.9,1);x.restore()})});
+}
+(function loop(){draw(D[cur],fr++);requestAnimationFrame(loop)})();
+go(0);
+</script>
+</body>
+</html>

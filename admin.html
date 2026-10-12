@@ -1,0 +1,54 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>لوحة المعلم</title><meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#fff7e6;color:#1f2a44;font-family:Cairo,system-ui,sans-serif;padding:16px;padding-bottom:60px}
+main{max-width:900px;margin:0 auto}h1{font-size:24px;margin:6px 0 14px}.box{background:#fff;border:3px solid #ff8a00;border-radius:18px;padding:16px;margin-bottom:14px}
+label{display:block;font-weight:700;font-size:14px;margin:10px 0 4px}input,select,textarea{width:100%;font:inherit;padding:9px 12px;border:2px solid #0002;border-radius:10px;background:#fff}textarea{min-height:70px}
+.btn{border:0;border-radius:12px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer;background:#e9ecf5;color:#1f2a44}.btn.pr{background:#ff8a00;color:#fff}.btn.rd{background:#ef4444;color:#fff}.btn.gr{background:#22c55e;color:#fff}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:0 0 auto}.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:560px){.g2{grid-template-columns:1fr}}
+.les{display:flex;gap:10px;align-items:center;border-bottom:1px solid #0001;padding:10px 0;flex-wrap:wrap}.les .t{flex:1;min-width:180px;font-weight:700}.les small{color:#6b6f80;font-weight:400;display:block}
+.it{display:flex;gap:8px;align-items:center;background:#fff7e6;border-radius:10px;padding:6px 10px;margin:6px 0}.it span{flex:1}.msg{padding:10px;border-radius:10px;margin:10px 0;display:none}.msg.on{display:block}.msg.err{background:#fee2e2}.msg.ok{background:#dcfce7}
+progress{width:100%;height:12px}
+</style></head><body><main>
+<h1>🎓 لوحة المعلم</h1><div id="msg" class="msg"></div><div id="app"></div></main>
+<script src="config.js"></script><script src="sb.js"></script>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function msg(t,k='ok'){const m=$('#msg');m.className='msg on '+k;m.textContent=t;clearTimeout(msg.t);msg.t=setTimeout(()=>m.className='msg',5000)}
+let lessons=[],ed=null;
+async function init(){
+ if(!SB.on()){$('#app').innerHTML='<div class="box">⚠️ لسه ما ضبطتش <b>config.js</b>. افتح ملف <b>README-AR.md</b> واتبع الخطوات (٥ دقايق)، وبعدها ارجع هنا.</div>';return}
+ if(!SB.sess()){loginView();return}
+ try{await refresh()}catch(e){if(/JWT|401|expired/i.test(e.message)){SB.logout();loginView();return}msg('خطأ: '+e.message,'err')}}
+function loginView(){$('#app').innerHTML=`<div class="box"><label>البريد الإلكتروني</label><input id="em" type="email" autocomplete="username"><label>كلمة السر</label><input id="pw" type="password" autocomplete="current-password"><div class="row" style="margin-top:12px"><button class="btn pr" id="li">دخول</button></div></div>`;
+ $('#li').onclick=async()=>{try{await SB.login($('#em').value.trim(),$('#pw').value);init()}catch(e){msg(e.message,'err')}}}
+async function refresh(){lessons=await SB.q('lessons?select=*&order=sort.asc,created_at.asc');listView()}
+function listView(){$('#app').innerHTML=`<div class="row" style="margin-bottom:12px"><button class="btn pr" id="nw">➕ درس جديد</button><a class="btn" href="./" target="_blank" style="text-decoration:none">👁 شوف الموقع</a><button class="btn" id="lo">خروج</button></div>
+ <div class="box">${lessons.map(l=>`<div class="les"><div style="font-size:30px">${esc(l.emoji)}</div><div class="t">${esc(l.title)}<small>${esc(l.cat)} • ${l.items.length} ملف • ${l.published?'منشور':'مخفي'}</small></div><button class="btn" data-e="${l.id}">تعديل</button><button class="btn" data-p="${l.id}">${l.published?'إخفاء':'نشر'}</button><button class="btn rd" data-x="${l.id}">حذف</button></div>`).join('')||'<div style="text-align:center;color:#6b6f80;padding:20px">لسه مفيش دروس مرفوعة. اضغط "درس جديد". (دروس الموقع الأساسية بتظهر للطلاب تلقائياً)</div>'}</div>`;
+ $('#nw').onclick=()=>edit({title:'',cat:'إنجليزي',emoji:'📘',color:'#ff8a00',descr:'',items:[],sort:100,published:true});$('#lo').onclick=()=>{SB.logout();init()};
+ document.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>edit(structuredClone(lessons.find(l=>l.id==b.dataset.e))));
+ document.querySelectorAll('[data-p]').forEach(b=>b.onclick=async()=>{const l=lessons.find(x=>x.id==b.dataset.p);try{await SB.q('lessons?id=eq.'+l.id,{method:'PATCH',body:JSON.stringify({published:!l.published})});refresh()}catch(e){msg(e.message,'err')}});
+ document.querySelectorAll('[data-x]').forEach(b=>b.onclick=async()=>{const l=lessons.find(x=>x.id==b.dataset.x);if(!confirm('تحذف "'+l.title+'"؟'))return;try{for(const it of l.items)if(it.deckId)await SB.q('deck_html?id=eq.'+it.deckId,{method:'DELETE'});await SB.q('lessons?id=eq.'+l.id,{method:'DELETE'});msg('اتحذف');refresh()}catch(e){msg(e.message,'err')}})}
+function edit(l){ed=l;const cats=['إنجليزي','نظم معلومات','إدارة','عام'];
+ $('#app').innerHTML=`<div class="box"><div class="g2"><div><label>اسم الدرس</label><input id="ti" value="${esc(l.title)}"></div><div><label>التصنيف</label><input id="ct" list="cl" value="${esc(l.cat)}"><datalist id="cl">${cats.map(c=>`<option>${c}</option>`).join('')}</datalist></div>
+ <div><label>إيموجي</label><input id="em" value="${esc(l.emoji)}" maxlength="4"></div><div><label>اللون</label><input id="co" type="color" value="${esc(l.color)}"></div><div><label>الترتيب (رقم أصغر = أول)</label><input id="so" type="number" value="${l.sort}"></div><div><label>الحالة</label><select id="pu"><option value="1" ${l.published?'selected':''}>منشور</option><option value="0" ${l.published?'':'selected'}>مخفي</option></select></div></div>
+ <label>وصف قصير</label><textarea id="de">${esc(l.descr)}</textarea>
+ <label>ملفات الدرس</label><div id="its"></div>
+ <div class="row" style="margin-top:8px"><button class="btn" data-a="deck">+ ديك تفاعلي (HTML)</button><button class="btn" data-a="pdf">+ PDF</button><button class="btn" data-a="video">+ فيديو (ملف)</button><button class="btn" data-a="yt">+ فيديو يوتيوب</button></div>
+ <progress id="pg" value="0" max="1" style="display:none;margin-top:10px"></progress><input type="file" id="fi" style="display:none">
+ <div class="row" style="margin-top:16px"><button class="btn gr" id="sv">💾 حفظ</button><button class="btn" id="cn">رجوع</button></div></div>`;items();
+ document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>add(b.dataset.a));$('#cn').onclick=()=>refresh();$('#sv').onclick=save}
+function items(){$('#its').innerHTML=ed.items.map((it,i)=>`<div class="it"><span>${{deck:'🧩',pdf:'📄',video:'🎬',youtube:'▶️'}[it.kind]} ${esc(it.label||it.kind)}</span><button class="btn rd" data-r="${i}">✕</button></div>`).join('')||'<div style="color:#6b6f80">لسه مفيش ملفات</div>';
+ document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{ed.items.splice(+b.dataset.r,1);items()})}
+async function add(kind){
+ if(kind=='yt'){const u=prompt('الصق رابط فيديو يوتيوب (يفضّل "غير مدرج")');if(!u)return;const m=u.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);if(!m)return msg('الرابط مش مفهوم','err');const lb=prompt('اسم الفيديو','فيديو الشرح')||'فيديو';ed.items.push({kind:'youtube',label:lb,yt:m[1]});return items()}
+ const fi=$('#fi');fi.value='';fi.accept={deck:'.html,.htm,text/html',pdf:'.pdf,application/pdf',video:'video/*'}[kind];
+ fi.onchange=async()=>{const f=fi.files[0];if(!f)return;const lb=prompt('اسم الملف اللي هيظهر للطالب',f.name.replace(/\.[^.]+$/,''))||f.name;const pg=$('#pg');pg.style.display='';pg.value=0;
+  try{if(kind=='deck'){if(f.size>6e6)throw new Error('الديك أكبر من 6 ميجا');const html=await f.text();const r=await SB.q('deck_html',{method:'POST',body:JSON.stringify({html})});ed.items.push({kind:'deck',label:lb,deckId:r[0].id})}
+   else{if(f.size>50*1024*1024)throw new Error('الملف أكبر من 50 ميجا (حد الخطة المجانية). ارفع الفيديو على يوتيوب وحط الرابط.');const path=Date.now()+'-'+f.name.replace(/[^\w.\-]/g,'_');const url=await SB.upload(f,path,p=>pg.value=p);ed.items.push({kind,label:lb,url})}
+   items();msg('اترفع ✓')}catch(e){msg(e.message,'err')}pg.style.display='none'};fi.click()}
+async function save(){ed.title=$('#ti').value.trim();if(!ed.title)return msg('اكتب اسم الدرس','err');
+ const row={title:ed.title,cat:$('#ct').value.trim()||'عام',emoji:$('#em').value||'📘',color:$('#co').value,descr:$('#de').value,sort:+$('#so').value||100,published:$('#pu').value=='1',items:ed.items};
+ try{if(ed.id)await SB.q('lessons?id=eq.'+ed.id,{method:'PATCH',body:JSON.stringify(row)});else await SB.q('lessons',{method:'POST',body:JSON.stringify(row)});msg('اتحفظ ✓');refresh()}catch(e){msg(e.message,'err')}}
+init();
+</script></body></html>

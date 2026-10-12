@@ -1,0 +1,127 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>منصة المذاكرة</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#ff8a00">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff7e6;--ink:#1f2a44;--mut:#6b6f80;--c:#ff8a00;--card:#fff;--sb:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Cairo,system-ui,sans-serif}
+body{min-height:100vh;padding-bottom:calc(76px + var(--sb))}
+header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:3px solid var(--c);padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:12px}
+.logo{font-weight:900;font-size:20px;flex:1}.logo small{display:block;font-weight:400;font-size:12px;color:var(--mut)}
+.stars{background:#fff3cf;border-radius:99px;padding:4px 12px;font-weight:700;font-size:14px}
+nav{position:fixed;bottom:0;inset-inline:0;z-index:20;background:#fff;border-top:1px solid #0001;display:flex;padding-bottom:var(--sb)}
+nav button{flex:1;border:0;background:none;font:inherit;padding:8px 2px;color:var(--mut);cursor:pointer;font-size:12px}
+nav button b{display:block;font-size:22px;font-weight:400}nav button.on{color:var(--c);font-weight:900}
+main{max-width:1100px;margin:0 auto;padding:16px}
+h2{margin:6px 0 12px;font-size:24px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+input[type=search],select{font:inherit;padding:9px 14px;border:2px solid #0002;border-radius:12px;background:#fff;min-width:0}
+input[type=search]{flex:1;min-width:150px}
+.chip{border:2px solid #0002;background:#fff;border-radius:99px;padding:6px 14px;font:inherit;cursor:pointer;font-size:14px}.chip.on{background:var(--c);border-color:var(--c);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--card);border-radius:20px;border:3px solid var(--c);box-shadow:0 6px 0 var(--c);padding:14px;cursor:pointer;display:flex;flex-direction:column;gap:6px;transition:transform .15s}
+.card:hover{transform:translateY(-3px)}.card .th{font-size:44px;line-height:1}.card h3{margin:2px 0;font-size:17px}.card p{margin:0;color:var(--mut);font-size:13.5px;flex:1}
+.tags{display:flex;gap:6px;flex-wrap:wrap}.tags span{background:#0000000d;border-radius:99px;padding:2px 10px;font-size:12px}
+.go{margin-top:6px;background:var(--c);color:#fff;border:0;border-radius:12px;padding:9px;font:inherit;font-weight:700;cursor:pointer}
+.done{color:#16a34a;font-weight:700;font-size:13px}
+.empty{text-align:center;color:var(--mut);padding:40px 10px}
+#modal{position:fixed;inset:0;z-index:50;background:#000a;display:none;align-items:stretch;justify-content:center}
+#modal.on{display:flex}.mb{background:#fff;width:min(1200px,100%);margin:auto;height:min(94vh,900px);border-radius:18px;display:flex;flex-direction:column;overflow:hidden}
+@media(max-width:700px){.mb{height:100%;border-radius:0}}
+.mh{display:flex;gap:8px;align-items:center;padding:10px 12px;padding-top:calc(10px + env(safe-area-inset-top,0px));border-bottom:1px solid #0002;flex-wrap:wrap}
+.mh h3{margin:0;font-size:16px;flex:1;min-width:140px}.mh button,.mh a{border:2px solid #0002;background:#fff;border-radius:10px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer;text-decoration:none;color:var(--ink)}
+.mh button.on{background:var(--c);color:#fff;border-color:var(--c)}.mv{flex:1;min-height:0;background:#111;position:relative}
+.mv iframe,.mv video{width:100%;height:100%;border:0;display:block;background:#000}
+.hint{background:#fff3cf;padding:6px 12px;font-size:13px;display:none}.hint.deck{display:block}
+.pdfbox{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;height:100%;background:#fff7e6;color:var(--ink);text-align:center;padding:20px}
+.big{background:var(--c);color:#fff;border:0;border-radius:14px;padding:12px 22px;font:inherit;font-weight:900;font-size:17px;text-decoration:none;cursor:pointer}
+.fc{max-width:520px;margin:10px auto;text-align:center}
+.fcard{perspective:900px;height:300px;cursor:pointer}.fin{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}.fcard.flip .fin{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;background:#fff;border:4px solid var(--c);border-radius:26px;box-shadow:0 8px 0 var(--c);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px}
+.face.bk{transform:rotateY(180deg)}.em{font-size:84px;line-height:1.1}.em svg{width:1em;height:1em}.lt{font:700 64px Fredoka,Cairo;color:var(--c)}.wd{font:700 34px Fredoka,Cairo}
+.sn{font:700 20px Fredoka,Cairo;color:var(--c)}.nt{color:var(--mut);font-size:15px;max-width:90%}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+.btn{border:0;border-radius:14px;padding:11px 18px;font:inherit;font-weight:700;font-size:16px;cursor:pointer;background:#e9ecf5;color:var(--ink)}.btn.ok{background:#22c55e;color:#fff}.btn.no{background:#f59e0b;color:#fff}.btn.pr{background:var(--c);color:#fff}
+.prog{height:10px;border-radius:9px;background:#0001;overflow:hidden;margin:8px 0}.prog i{display:block;height:100%;background:var(--c);transition:width .3s}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}.opt{background:#fff;border:3px solid #0002;border-radius:18px;padding:12px;font:inherit;font-size:20px;cursor:pointer;min-height:90px;display:flex;align-items:center;justify-content:center;text-align:center}
+.opt .em{font-size:52px}.opt.good{border-color:#22c55e;background:#dcfce7}.opt.bad{border-color:#ef4444;background:#fee2e2}
+.q{font-size:20px;font-weight:700;text-align:center;margin:8px 0}.say{font-size:56px;background:var(--c);color:#fff;border:0;border-radius:50%;width:90px;height:90px;cursor:pointer;display:block;margin:6px auto}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}.stat div{background:#fff;border:3px solid var(--c);border-radius:18px;padding:16px;text-align:center}.stat b{display:block;font-size:34px;color:var(--c)}
+</style></head><body>
+<header><div class="logo" id="logo">منصة المذاكرة<small id="tag"></small></div><div class="stars" id="stars">⭐ 0</div></header>
+<main id="app"></main>
+<nav id="nav"><button data-t="lessons"><b>📚</b>الدروس</button><button data-t="cards"><b>🃏</b>بطاقات الحفظ</button><button data-t="quiz"><b>🎯</b>اختبر نفسك</button><button data-t="me"><b>🏆</b>تقدّمي</button></nav>
+<div id="modal"><div class="mb"><div class="mh"><h3 id="mt"></h3><span id="mtabs"></span><button id="fs">⛶ ملء الشاشة</button><a id="newtab" target="_blank" rel="noopener">↗ تبويب جديد</a><button id="done">✓ خلّصت الدرس</button><button id="mx">✕ إغلاق</button></div><div class="hint deck" id="hint">👆 اضغط على الشاشة (أو مسافة) لإظهار العناصر • الأسهم للتنقل • 📱 لف الموبايل أفقي</div><div class="mv" id="mv"></div></div></div>
+<script src="config.js"></script><script src="sb.js"></script><script src="study.js"></script>
+<script>
+const $=s=>document.querySelector(s),LS=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}};
+let P=LS('prog',{done:{},known:{},best:0,quizzes:0}),L=[],tab='lessons',cat='الكل',qs='',cur=null,ci=0;
+const save=()=>{localStorage.setItem('prog',JSON.stringify(P));stars()};
+const stars=()=>{$('#stars').textContent='⭐ '+(Object.keys(P.done).length*3+Object.keys(P.known).length+P.best)};
+const KL={deck:'ديك تفاعلي',pdf:'PDF',video:'فيديو',youtube:'فيديو'};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+document.title=SITE.name;$('#logo').firstChild.textContent=SITE.name;$('#tag').textContent=SITE.tagline||'';
+async function load(){let b=[],r=[];try{b=await(await fetch('content/manifest.json')).json()}catch(e){}
+ if(SB.on()){try{r=await SB.q('lessons?select=*&published=eq.true&order=sort.asc')}catch(e){console.warn(e)}}
+ L=[...b,...r.map(x=>({...x,remote:1}))];render()}
+function go(t){tab=t;document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t==t));render();scrollTo(0,0)}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.t));
+function render(){stars();({lessons:vLessons,cards:vCards,quiz:vQuiz,me:vMe})[tab]()}
+function vLessons(){const cats=['الكل',...new Set(L.map(l=>l.cat||'عام'))];
+ const f=L.filter(l=>(cat=='الكل'||(l.cat||'عام')==cat)&&(!qs||(l.title+(l.descr||l.desc||'')).includes(qs)));
+ $('#app').innerHTML=`<h2>📚 الدروس</h2><div class="bar"><input type="search" id="s" placeholder="ابحث عن درس…" value="${esc(qs)}"></div><div class="bar">${cats.map(c=>`<button class="chip ${c==cat?'on':''}" data-c="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+ <div class="grid">${f.map(l=>{const i=L.indexOf(l),k=[...new Set(l.items.map(x=>KL[x.kind]))];return`<article class="card" style="--c:${esc(l.color||'#ff8a00')}" onclick="openL(${i})"><div class="th">${esc(l.emoji||'📘')}</div><h3>${esc(l.title)}</h3><p>${esc(l.descr||l.desc||'')}</p><div class="tags">${k.map(x=>`<span>${x}</span>`).join('')}</div>${P.done[l.id]?'<div class="done">✓ خلّصته</div>':''}<button class="go">ابدأ</button></article>`}).join('')||'<div class="empty">مفيش دروس مطابقة</div>'}</div>`;
+ $('#s').oninput=e=>{qs=e.target.value;const p=e.target.selectionStart;vLessons();const s=$('#s');s.focus();s.setSelectionRange(p,p)};
+ document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{cat=b.dataset.c;vLessons()})}
+async function openL(i){cur=L[i];$('#mt').textContent=cur.title;$('#modal').style.setProperty('--c',cur.color||'#ff8a00');$('#modal').classList.add('on');document.body.style.overflow='hidden';
+ $('#mtabs').innerHTML=cur.items.map((x,k)=>`<button data-k="${k}">${esc(x.label||KL[x.kind])}</button>`).join(' ');
+ document.querySelectorAll('#mtabs button').forEach(b=>b.onclick=()=>showI(+b.dataset.k));showI(0)}
+async function showI(k){const x=cur.items[k],mv=$('#mv');document.querySelectorAll('#mtabs button').forEach((b,j)=>b.classList.toggle('on',j==k));
+ $('#hint').style.display=x.kind=='deck'?'':'none';$('#fs').style.display=x.kind=='deck'||x.kind=='youtube'?'':'none';
+ let url=x.url||'';$('#newtab').style.display=url?'':'none';$('#newtab').href=url;mv.innerHTML='';
+ if(x.kind=='deck'){const f=document.createElement('iframe');f.allow='fullscreen;autoplay';f.setAttribute('allowfullscreen','');
+  if(x.deckId){mv.innerHTML='<div class="pdfbox">⏳ جاري التحميل…</div>';try{const r=await SB.q('deck_html?select=html&id=eq.'+x.deckId);f.sandbox='allow-scripts allow-popups';f.srcdoc=r[0].html;mv.innerHTML='';mv.append(f)}catch(e){mv.innerHTML='<div class="pdfbox">تعذّر تحميل الدرس</div>'}}
+  else{f.src=url;mv.append(f)}}
+ else if(x.kind=='pdf'){mv.innerHTML=`<div class="pdfbox"><div style="font-size:64px">📄</div><b>${esc(x.label||'ملف PDF')}</b><a class="big" href="${esc(url)}" target="_blank" rel="noopener">افتح الملف</a><a href="${esc(url)}" download style="color:var(--c)">⬇ تحميل</a></div>`}
+ else if(x.kind=='video'){mv.innerHTML=`<video controls playsinline preload="metadata" src="${esc(url)}"></video>`}
+ else if(x.kind=='youtube'){mv.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${esc(x.yt)}?rel=0" allow="accelerometer;autoplay;encrypted-media;picture-in-picture;fullscreen" allowfullscreen></iframe>`;$('#newtab').style.display='';$('#newtab').href='https://youtu.be/'+x.yt}}
+$('#mx').onclick=()=>{$('#modal').classList.remove('on');$('#mv').innerHTML='';document.body.style.overflow=''};
+$('#done').onclick=()=>{if(cur){P.done[cur.id]=1;save();$('#done').textContent='✓ تمام!';setTimeout(()=>$('#done').textContent='✓ خلّصت الدرس',1200);if(tab=='lessons')vLessons()}};
+$('#fs').onclick=()=>{const e=$('#mv iframe');if(e)(e.requestFullscreen||e.webkitRequestFullscreen||(()=>{})).call(e)};
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=.8;speechSynthesis.speak(u)}
+/* ---------- بطاقات الحفظ ---------- */
+let deckK='let',only=false,order=[];
+function cardsOf(){return deckK=='let'?LET.map((x,i)=>({id:'L'+x[0],f:x[3],big:x[0],word:x[1],snd:x[2],note:x[4],star:x[5],say:x[1]})):WRD.map(x=>({id:'W'+x[0],f:x[3],big:x[0],word:x[1],snd:x[2],note:x[4],say:x[0],word2:1}))}
+function vCards(){let all=cardsOf();order=all.filter(c=>!only||!P.known[c.id]);if(ci>=order.length)ci=0;const c=order[ci],known=all.filter(x=>P.known[x.id]).length;
+ $('#app').innerHTML=`<h2>🃏 بطاقات الحفظ</h2><div class="bar"><button class="chip ${deckK=='let'?'on':''}" data-d="let">الحروف (${LET.length})</button><button class="chip ${deckK=='wrd'?'on':''}" data-d="wrd">الكلمات (${WRD.length})</button><label class="chip"><input type="checkbox" id="only" ${only?'checked':''}> الغير محفوظة بس</label></div>
+ <div class="prog"><i style="width:${known/all.length*100}%"></i></div><div style="text-align:center;color:var(--mut)">حفظت ${known} من ${all.length}</div>
+ ${c?`<div class="fc"><div class="fcard" id="fc"><div class="fin"><div class="face"><div class="em">${c.f}</div><div class="${deckK=='let'?'lt':'wd'}">${esc(c.big)}</div>${c.star?'<div class="nt">★ إضافة</div>':''}<div class="nt">دوس عشان تشوف الإجابة</div></div>
+ <div class="face bk"><div class="wd">${esc(deckK=='let'?c.word:c.big)}</div><div class="sn" dir="ltr">${esc(c.snd)}</div><div class="nt">${esc(deckK=='let'?'':c.word)}</div><div class="nt">${esc(c.note||'')}</div></div></div></div>
+ <div class="row"><button class="btn pr" id="sp">🔊 اسمع</button></div><div class="row"><button class="btn no" id="again">🔁 راجعها</button><button class="btn ok" id="know">✓ حفظتها</button></div><div class="row"><button class="btn" id="prev">▶ السابقة</button><button class="btn" id="shuf">🔀 خلط</button><button class="btn" id="next">◀ التالية</button></div></div>`:'<div class="empty">🎉 حفظت كل البطاقات في المجموعة دي!</div>'}`;
+ document.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{deckK=b.dataset.d;ci=0;vCards()});$('#only').onchange=e=>{only=e.target.checked;ci=0;vCards()};
+ if(!c)return;$('#fc').onclick=()=>{$('#fc').classList.toggle('flip');if($('#fc').classList.contains('flip'))speak(c.say)};$('#sp').onclick=()=>speak(c.say);
+ const nx=d=>{ci=(ci+d+order.length)%order.length;vCards()};$('#next').onclick=()=>nx(1);$('#prev').onclick=()=>nx(-1);
+ $('#know').onclick=()=>{P.known[c.id]=1;save();nx(only?0:1)};$('#again').onclick=()=>{delete P.known[c.id];save();nx(1)};
+ $('#shuf').onclick=()=>{const a=cardsOf();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}if(deckK=='let')LET.splice(0,LET.length,...a.map(x=>LET.find(l=>l[0]==x.big)));else WRD.splice(0,WRD.length,...a.map(x=>WRD.find(l=>l[0]==x.big)));ci=0;vCards()}}
+/* ---------- الاختبار ---------- */
+let Q=null;
+const rnd=a=>a[Math.random()*a.length|0],shuf=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+function vQuiz(){if(!Q){$('#app').innerHTML=`<h2>🎯 اختبر نفسك</h2><div class="fc"><div class="empty" style="font-size:18px">١٠ أسئلة: اسمع واختار الصورة، أو اختار الحرف، أو معنى الكلمة.<br>كل إجابة صح بتجيب نقطة ⭐</div><div class="row"><button class="btn pr" id="st">ابدأ الاختبار</button></div></div>`;$('#st').onclick=startQ;return}
+ if(Q.i>=Q.qs.length){const s=Q.score;$('#app').innerHTML=`<h2>🎯 النتيجة</h2><div class="fc"><div class="em">${s>=9?'🏆':s>=7?'🌟':s>=5?'👍':'💪'}</div><div class="wd">${s} / ${Q.qs.length}</div><div class="nt">${s>=9?'ممتاز يا بطل!':s>=7?'جميل جداً!':s>=5?'كويس، كمّل تدريب':'ارجع لبطاقات الحفظ وجرّب تاني'}</div>${Q.wrong.length?`<div class="nt" style="margin-top:10px">راجع: ${Q.wrong.map(esc).join('، ')}</div>`:''}<div class="row"><button class="btn pr" id="st">اختبار جديد</button></div></div>`;$('#st').onclick=startQ;return}
+ const q=Q.qs[Q.i];$('#app').innerHTML=`<div class="prog"><i style="width:${Q.i/Q.qs.length*100}%"></i></div><div class="fc"><div class="q">${q.t}</div>${q.say?`<button class="say" id="sy">🔊</button>`:`<div class="em" style="margin:8px 0">${q.show||''}</div>`}<div class="opts">${q.o.map((o,k)=>`<button class="opt" data-k="${k}">${o.h}</button>`).join('')}</div></div>`;
+ if(q.say){speak(q.say);$('#sy').onclick=()=>speak(q.say)}
+ document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(Q.lock)return;Q.lock=1;const k=+b.dataset.k,ok=q.o[k].ok;b.classList.add(ok?'good':'bad');if(!ok){document.querySelectorAll('.opt')[q.o.findIndex(x=>x.ok)].classList.add('good');Q.wrong.push(q.w)}else Q.score++;
+  setTimeout(()=>{Q.i++;Q.lock=0;if(Q.i>=Q.qs.length){P.quizzes++;P.best=Math.max(P.best,Q.score);save()}vQuiz()},ok?700:1500)})}
+function startQ(){const items=[...LET.map(x=>({w:x[1],e:x[3],l:x[0][0],m:null})),...WRD.map(x=>({w:x[0],e:x[3],l:x[0][0].toUpperCase(),m:x[1]}))],qs=[];
+ for(let n=0;n<10;n++){const a=rnd(items),ty=n%3,others=shuf(items.filter(x=>x.w!=a.w));
+  if(ty==0){qs.push({t:'اسمع الكلمة واختار الصورة الصح',say:a.w,w:a.w,o:shuf([a,...others.slice(0,3)]).map(x=>({h:`<span class="em">${x.e}</span>`,ok:x.w==a.w}))})}
+  else if(ty==1){const ls=shuf([...new Set([a.l,...others.map(x=>x.l)])].filter(l=>l!=a.l)).slice(0,3);qs.push({t:'الصورة دي بتبدأ بأنهي حرف؟',show:a.e,w:a.w,o:shuf([a.l,...ls]).map(l=>({h:`<b style="font:700 40px Fredoka">${l}</b>`,ok:l==a.l}))})}
+  else{const b=a.m?a:rnd(WRD.map(x=>({w:x[0],e:x[3],m:x[1]})));const ms=shuf(WRD.filter(x=>x[1]!=b.m)).slice(0,3);qs.push({t:`إيه معنى <b dir="ltr" style="font-family:Fredoka">${esc(b.w)}</b>؟`,say:b.w,w:b.w,o:shuf([b.m,...ms.map(x=>x[1])]).map(m=>({h:esc(m),ok:m==b.m}))})}}
+ Q={qs,i:0,score:0,wrong:[]};vQuiz()}
+function vMe(){const dn=L.filter(l=>P.done[l.id]).length,kn=Object.keys(P.known).length;
+ $('#app').innerHTML=`<h2>🏆 تقدّمي</h2><div class="stat"><div><b>${dn}/${L.length}</b>دروس خلّصتها</div><div><b>${kn}</b>بطاقة محفوظة</div><div><b>${P.best}/10</b>أفضل نتيجة</div><div><b>${P.quizzes}</b>اختبارات عملتها</div></div>
+ <p style="color:var(--mut);text-align:center;margin-top:20px">التقدّم بيتحفظ على جهازك. ★ جنب أي بطاقة معناها إضافة مش في الملف الأصلي للكورس.</p>
+ <div class="row"><button class="btn" id="rs">إعادة ضبط تقدّمي</button></div>`;$('#rs').onclick=()=>{if(confirm('متأكد؟')){P={done:{},known:{},best:0,quizzes:0};save();vMe()}}}
+addEventListener('keydown',e=>{if(e.key=='Escape')$('#mx').click()});
+go('lessons');load();
+</script></body></html>
