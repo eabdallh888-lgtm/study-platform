@@ -47,12 +47,100 @@ input[type=search]{flex:1;min-width:150px}
 .opt .em{font-size:52px}.opt.good{border-color:#22c55e;background:#dcfce7}.opt.bad{border-color:#ef4444;background:#fee2e2}
 .q{font-size:20px;font-weight:700;text-align:center;margin:8px 0}.say{font-size:56px;background:var(--c);color:#fff;border:0;border-radius:50%;width:90px;height:90px;cursor:pointer;display:block;margin:6px auto}
 .stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}.stat div{background:#fff;border:3px solid var(--c);border-radius:18px;padding:16px;text-align:center}.stat b{display:block;font-size:34px;color:var(--c)}
+#recoveryPage{display:none;min-height:100vh;padding:24px 16px;align-items:center;justify-content:center;background:var(--bg)}
+body.recovery #recoveryPage{display:flex}
+body.recovery>header,body.recovery>#app,body.recovery>nav,body.recovery>#modal{display:none!important}
+.recovery-card{width:min(460px,100%);background:#fff;border:3px solid var(--c);border-radius:22px;padding:24px;box-shadow:0 8px 0 var(--c)}
+.recovery-card h1{font-size:24px;margin:0 0 8px}
+.recovery-card p{color:var(--mut);margin:0 0 18px}
+.recovery-card label{display:block;font-weight:700;margin:12px 0 6px}
+.recovery-card input{width:100%;font:inherit;padding:12px;border:2px solid #0002;border-radius:12px}
+.recovery-card button,.recovery-card a{display:block;width:100%;margin-top:14px;text-align:center}
+#recoveryMsg{margin-top:14px;font-weight:700;white-space:pre-wrap}
 </style></head><body>
+<div id="recoveryPage">
+ <section class="recovery-card">
+  <h1>🔐 تعيين كلمة مرور جديدة</h1>
+  <p>اكتب كلمة المرور الجديدة لحسابك، ثم أكّدها.</p>
+  <form id="recoveryForm">
+   <label for="newPassword">كلمة المرور الجديدة</label>
+   <input id="newPassword" type="password" minlength="8" autocomplete="new-password" required>
+   <label for="confirmPassword">تأكيد كلمة المرور</label>
+   <input id="confirmPassword" type="password" minlength="8" autocomplete="new-password" required>
+   <button class="big" type="submit" id="recoverySubmit">حفظ كلمة المرور</button>
+  </form>
+  <div id="recoveryMsg" role="status"></div>
+  <a class="big" id="backToLogin" href="admin.html" style="display:none">الانتقال إلى صفحة المدير</a>
+ </section>
+</div>
 <header><div class="logo" id="logo">منصة المذاكرة<small id="tag"></small></div><div class="stars" id="stars">⭐ 0</div></header>
 <main id="app"></main>
 <nav id="nav"><button data-t="lessons"><b>📚</b>الدروس</button><button data-t="cards"><b>🃏</b>بطاقات الحفظ</button><button data-t="quiz"><b>🎯</b>اختبر نفسك</button><button data-t="me"><b>🏆</b>تقدّمي</button></nav>
 <div id="modal"><div class="mb"><div class="mh"><h3 id="mt"></h3><span id="mtabs"></span><button id="fs">⛶ ملء الشاشة</button><a id="newtab" target="_blank" rel="noopener">↗ تبويب جديد</a><button id="done">✓ خلّصت الدرس</button><button id="mx">✕ إغلاق</button></div><div class="hint deck" id="hint">👆 اضغط على الشاشة (أو مسافة) لإظهار العناصر • الأسهم للتنقل • 📱 لف الموبايل أفقي</div><div class="mv" id="mv"></div></div></div>
 <script src="config.js"></script><script src="sb.js"></script><script src="study.js"></script>
+<script>
+(async function handlePasswordRecovery(){
+ const hash = new URLSearchParams(location.hash.slice(1));
+ if(hash.get('type') !== 'recovery') return;
+
+ document.body.classList.add('recovery');
+ const form = document.getElementById('recoveryForm');
+ const msg = document.getElementById('recoveryMsg');
+ const submit = document.getElementById('recoverySubmit');
+ const back = document.getElementById('backToLogin');
+ const accessToken = hash.get('access_token');
+
+ if(!accessToken){
+  msg.textContent = 'رابط الاستعادة غير مكتمل أو انتهت صلاحيته. اطلب رسالة استعادة جديدة.';
+  form.style.display = 'none';
+  return;
+ }
+
+ form.addEventListener('submit', async function(e){
+  e.preventDefault();
+  const password = document.getElementById('newPassword').value;
+  const confirm = document.getElementById('confirmPassword').value;
+
+  if(password.length < 8){
+   msg.textContent = 'كلمة المرور لازم تكون 8 أحرف على الأقل.';
+   return;
+  }
+  if(password !== confirm){
+   msg.textContent = 'كلمتا المرور غير متطابقتين.';
+   return;
+  }
+
+  submit.disabled = true;
+  submit.textContent = 'جارٍ الحفظ…';
+  msg.textContent = '';
+
+  try{
+   const response = await fetch(SITE.supabaseUrl.replace(/\/$/, '') + '/auth/v1/user', {
+    method: 'PUT',
+    headers: {
+     apikey: SITE.supabaseKey,
+     Authorization: 'Bearer ' + accessToken,
+     'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({password: password})
+   });
+   const result = await response.json().catch(()=>({}));
+   if(!response.ok){
+    throw new Error(result.msg || result.message || result.error_description || 'تعذّر تغيير كلمة المرور. اطلب رابط استعادة جديدًا.');
+   }
+   form.style.display = 'none';
+   msg.textContent = 'تم تغيير كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول بحساب المدير.';
+   back.style.display = 'block';
+   history.replaceState(null, document.title, location.pathname + location.search);
+  }catch(error){
+   msg.textContent = error.message || 'حدث خطأ أثناء حفظ كلمة المرور.';
+  }finally{
+   submit.disabled = false;
+   submit.textContent = 'حفظ كلمة المرور';
+  }
+ });
+})();
+</script>
 <script>
 const $=s=>document.querySelector(s),LS=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}};
 let P=LS('prog',{done:{},known:{},best:0,quizzes:0}),L=[],tab='lessons',cat='الكل',qs='',cur=null,ci=0;
