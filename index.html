@@ -54,23 +54,36 @@ body.recovery>header,body.recovery>#app,body.recovery>nav,body.recovery>#modal{d
 .recovery-card h1{font-size:24px;margin:0 0 8px}
 .recovery-card p{color:var(--mut);margin:0 0 18px}
 .recovery-card label{display:block;font-weight:700;margin:12px 0 6px}
-.recovery-card input{width:100%;font:inherit;padding:12px;border:2px solid #0002;border-radius:12px}
-.recovery-card button,.recovery-card a{display:block;width:100%;margin-top:14px;text-align:center}
-#recoveryMsg{margin-top:14px;font-weight:700;white-space:pre-wrap}
+.recovery-card input[type=password],.recovery-card input[type=text],.recovery-card input[type=email]{width:100%;font:inherit;padding:12px;border:2px solid #0002;border-radius:12px}
+.recovery-card input:focus{outline:3px solid #ff8a0055;border-color:var(--c)}
+.recovery-card button,.recovery-card a.big{display:block;width:100%;margin-top:14px;text-align:center}
+.recovery-card button:disabled{opacity:.6;cursor:not-allowed}
+.recovery-card .shw{display:flex;gap:8px;align-items:center;margin-top:10px;font-weight:400;font-size:14px}
+.recovery-card .shw input{width:auto}
+.recovery-card .lnk{display:block;text-align:center;margin-top:16px;color:var(--mut);font-size:14px}
+#recoveryMsg{margin-top:14px;font-weight:700;white-space:pre-wrap;line-height:1.7}
+#recoveryMsg.err{color:#b91c1c}#recoveryMsg.ok{color:#15803d}
 </style></head><body>
 <div id="recoveryPage">
  <section class="recovery-card">
-  <h1>🔐 تعيين كلمة مرور جديدة</h1>
-  <p>اكتب كلمة المرور الجديدة لحسابك، ثم أكّدها.</p>
-  <form id="recoveryForm">
+  <h1 id="rcTitle">🔐 تعيين كلمة مرور جديدة</h1>
+  <p id="rcSub">اكتب كلمة المرور الجديدة لحسابك، ثم أكّدها.</p>
+  <form id="recoveryForm" novalidate>
    <label for="newPassword">كلمة المرور الجديدة</label>
    <input id="newPassword" type="password" minlength="8" autocomplete="new-password" required>
    <label for="confirmPassword">تأكيد كلمة المرور</label>
    <input id="confirmPassword" type="password" minlength="8" autocomplete="new-password" required>
+   <label class="shw"><input type="checkbox" id="showPw"> إظهار كلمة المرور</label>
    <button class="big" type="submit" id="recoverySubmit">حفظ كلمة المرور</button>
   </form>
-  <div id="recoveryMsg" role="status"></div>
+  <div id="recoveryMsg" role="status" aria-live="polite"></div>
+  <form id="resendForm" novalidate style="display:none">
+   <label for="resendEmail">اطلب رابط استعادة جديد</label>
+   <input id="resendEmail" type="email" autocomplete="username" placeholder="بريدك الإلكتروني" required>
+   <button class="big" type="submit" id="resendSubmit">إرسال رابط جديد</button>
+  </form>
   <a class="big" id="backToLogin" href="admin.html" style="display:none">الانتقال إلى صفحة المدير</a>
+  <a class="lnk" id="backHome" href="./">العودة إلى المنصة</a>
  </section>
 </div>
 <header><div class="logo" id="logo">منصة المذاكرة<small id="tag"></small></div><div class="stars" id="stars">⭐ 0</div></header>
@@ -79,65 +92,73 @@ body.recovery>header,body.recovery>#app,body.recovery>nav,body.recovery>#modal{d
 <div id="modal"><div class="mb"><div class="mh"><h3 id="mt"></h3><span id="mtabs"></span><button id="fs">⛶ ملء الشاشة</button><a id="newtab" target="_blank" rel="noopener">↗ تبويب جديد</a><button id="done">✓ خلّصت الدرس</button><button id="mx">✕ إغلاق</button></div><div class="hint deck" id="hint">👆 اضغط على الشاشة (أو مسافة) لإظهار العناصر • الأسهم للتنقل • 📱 لف الموبايل أفقي</div><div class="mv" id="mv"></div></div></div>
 <script src="config.js"></script><script src="sb.js"></script><script src="study.js"></script>
 <script>
-(async function handlePasswordRecovery(){
- const hash = new URLSearchParams(location.hash.slice(1));
- if(hash.get('type') !== 'recovery') return;
+(function(){
+ // 1) اقرأ بيانات الرابط فورًا وفي الذاكرة بس، وبعدها امسحها من العنوان (عشان التوكن ما يفضلش في الـ history)
+ var q=new URLSearchParams(location.search),h=new URLSearchParams(location.hash.replace(/^#/,''));
+ var type=h.get('type'),token=h.get('access_token'),authErr=h.get('error_code')||h.get('error'),
+     code=q.get('code'),mode=null;
+ if(type==='recovery'&&token)mode='form';
+ else if(type==='recovery')mode='incomplete';
+ else if(authErr)mode='error';
+ else if(code&&code.length>=8&&!h.toString())mode='pkce';
+ if(!mode)return;                                   // فتح عادي للموقع: مفيش أي تدخل
+ try{q.delete('code');var qs=q.toString();history.replaceState(null,document.title,location.pathname+(qs?'?'+qs:''))}catch(e){}
+ window.__RECOVERY__=true;document.body.classList.add('recovery');
 
- document.body.classList.add('recovery');
- const form = document.getElementById('recoveryForm');
- const msg = document.getElementById('recoveryMsg');
- const submit = document.getElementById('recoverySubmit');
- const back = document.getElementById('backToLogin');
- const accessToken = hash.get('access_token');
+ var $r=function(id){return document.getElementById(id)},
+  form=$r('recoveryForm'),msg=$r('recoveryMsg'),submit=$r('recoverySubmit'),back=$r('backToLogin'),
+  resend=$r('resendForm'),title=$r('rcTitle'),sub=$r('rcSub'),busy=false,done=false;
+ function say(t,k){msg.textContent=t||'';msg.className=k||''}
+ function needNewLink(t){form.style.display='none';resend.style.display='block';title.textContent='🔁 رابط جديد';sub.textContent='';say(t,'err')}
+ function siteRoot(){return new URL('./',location.href).href}
 
- if(!accessToken){
-  msg.textContent = 'رابط الاستعادة غير مكتمل أو انتهت صلاحيته. اطلب رسالة استعادة جديدة.';
-  form.style.display = 'none';
-  return;
+ if(typeof SITE==='undefined'||typeof SB==='undefined'||!SB.on()){form.style.display='none';say('إعدادات الاتصال غير مكتملة (config.js). تواصل مع مدير المنصة.','err');return}
+
+ if(mode==='incomplete')needNewLink('رابط الاستعادة غير مكتمل. اطلب رابطًا جديدًا من هنا.');
+ else if(mode==='pkce')needNewLink('الرابط ده اتولّد بطريقة مش مدعومة من هذه الصفحة (PKCE) ومينفعش يتكمل من هنا. اطلب رابطًا جديدًا من الخانة تحت.');
+ else if(mode==='error'){
+  var exp=/expired|invalid/i.test((authErr||'')+' '+(h.get('error_description')||''));
+  needNewLink(exp?'رابط الاستعادة انتهت صلاحيته أو اتفتح قبل كده (ساعات برنامج الإيميل بيفتحه تلقائيًا للفحص الأمني).\nاطلب رابطًا جديدًا، ولما توصلك الرسالة انسخ الرابط والصقه في المتصفح بدل ما تضغط عليه.':'حصل خطأ في رابط الاستعادة. اطلب رابطًا جديدًا.')}
+
+ $r('showPw').addEventListener('change',function(e){var t=e.target.checked?'text':'password';$r('newPassword').type=t;$r('confirmPassword').type=t});
+
+ function mapError(res){
+  var m=(res.msg||'').toLowerCase(),c=res.code||'';
+  if(c==='same_password'||/different from the old/.test(m))return{t:'كلمة المرور الجديدة لازم تختلف عن القديمة.'};
+  if(c==='weak_password'||/password should|weak/.test(m))return{t:'كلمة المرور ضعيفة. استخدم 8 أحرف على الأقل، والأفضل حروف وأرقام ورموز.'};
+  if(res.status===429||/rate/.test(c))return{t:'محاولات كتير في وقت قصير. استنى دقيقة وجرّب تاني.'};
+  if(res.status===401||res.status===403||/jwt|expired|invalid|session/.test(m+c))return{t:'رابط الاستعادة انتهت صلاحيته أو اتستخدم قبل كده.',renew:true};
+  return{t:'تعذّر تغيير كلمة المرور. اطلب رابطًا جديدًا وجرّب تاني.',renew:true};
  }
 
- form.addEventListener('submit', async function(e){
-  e.preventDefault();
-  const password = document.getElementById('newPassword').value;
-  const confirm = document.getElementById('confirmPassword').value;
-
-  if(password.length < 8){
-   msg.textContent = 'كلمة المرور لازم تكون 8 أحرف على الأقل.';
-   return;
-  }
-  if(password !== confirm){
-   msg.textContent = 'كلمتا المرور غير متطابقتين.';
-   return;
-  }
-
-  submit.disabled = true;
-  submit.textContent = 'جارٍ الحفظ…';
-  msg.textContent = '';
-
+ form.addEventListener('submit',async function(e){
+  e.preventDefault();if(busy||done||!token)return;
+  var pw=$r('newPassword').value,cf=$r('confirmPassword').value;
+  if(pw.length<8)return say('كلمة المرور لازم تكون 8 أحرف على الأقل.','err');
+  if(pw!==cf)return say('كلمتا المرور غير متطابقتين.','err');
+  busy=true;submit.disabled=true;submit.textContent='جارٍ الحفظ…';say('');
   try{
-   const response = await fetch(SITE.supabaseUrl.replace(/\/$/, '') + '/auth/v1/user', {
-    method: 'PUT',
-    headers: {
-     apikey: SITE.supabaseKey,
-     Authorization: 'Bearer ' + accessToken,
-     'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({password: password})
-   });
-   const result = await response.json().catch(()=>({}));
-   if(!response.ok){
-    throw new Error(result.msg || result.message || result.error_description || 'تعذّر تغيير كلمة المرور. اطلب رابط استعادة جديدًا.');
-   }
-   form.style.display = 'none';
-   msg.textContent = 'تم تغيير كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول بحساب المدير.';
-   back.style.display = 'block';
-   history.replaceState(null, document.title, location.pathname + location.search);
-  }catch(error){
-   msg.textContent = error.message || 'حدث خطأ أثناء حفظ كلمة المرور.';
-  }finally{
-   submit.disabled = false;
-   submit.textContent = 'حفظ كلمة المرور';
-  }
+   var res=await SB.setPassword(token,pw);
+   // النجاح لازم يتأكد: HTTP ناجح + Supabase رجّع بيانات المستخدم فعلًا
+   if(!res.ok||!res.user||!res.user.id){var er=mapError(res);if(er.renew)needNewLink(er.t);else say(er.t,'err');return}
+   done=true;token=null;form.style.display='none';
+   var verified=false;
+   try{await SB.login(res.user.email,pw);verified=true}catch(x){}
+   $r('newPassword').value='';$r('confirmPassword').value='';title.textContent='✅ تم';
+   say(verified?'تم تغيير كلمة المرور بنجاح، واتأكدنا منها بتسجيل دخول فعلي.\nتقدر تكمل لصفحة المدير.':'تم تغيير كلمة المرور بنجاح، لكن مقدرناش نتأكد منها تلقائيًا. جرّب تسجّل الدخول من صفحة المدير.','ok');
+   back.style.display='block';
+  }catch(err){say('تعذّر الاتصال بالخادم. تأكد من الإنترنت وجرّب تاني.','err')}
+  finally{busy=false;if(!done){submit.disabled=false;submit.textContent='حفظ كلمة المرور'}}
+ });
+
+ resend.addEventListener('submit',async function(e){
+  e.preventDefault();if(busy)return;
+  var em=$r('resendEmail').value.trim(),b=$r('resendSubmit');
+  if(!/^\S+@\S+\.\S+$/.test(em))return say('اكتب بريد إلكتروني صحيح.','err');
+  busy=true;b.disabled=true;say('');
+  try{await SB.recover(em,siteRoot());say('لو الإيميل ده مسجّل هتوصلك رسالة خلال دقايق. افتح الرابط من نفس المتصفح بسرعة.','ok')}
+  catch(err){say(err&&err.status===429?'طلبات كتير في وقت قصير. استنى دقيقة وجرّب تاني.':'تعذّر إرسال الرسالة. تأكد من الاتصال وجرّب تاني.','err')}
+  finally{busy=false;b.disabled=false}
  });
 })();
 </script>
@@ -211,5 +232,5 @@ function vMe(){const dn=L.filter(l=>P.done[l.id]).length,kn=Object.keys(P.known)
  <p style="color:var(--mut);text-align:center;margin-top:20px">التقدّم بيتحفظ على جهازك. ★ جنب أي بطاقة معناها إضافة مش في الملف الأصلي للكورس.</p>
  <div class="row"><button class="btn" id="rs">إعادة ضبط تقدّمي</button></div>`;$('#rs').onclick=()=>{if(confirm('متأكد؟')){P={done:{},known:{},best:0,quizzes:0};save();vMe()}}}
 addEventListener('keydown',e=>{if(e.key=='Escape')$('#mx').click()});
-go('lessons');load();
+if(!window.__RECOVERY__){go('lessons');load()}
 </script></body></html>
