@@ -1,54 +1,238 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>لوحة المعلم</title><meta name="robots" content="noindex">
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>لوحة إدارة منصة المذاكرة</title>
+<meta name="robots" content="noindex">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box}body{margin:0;background:#fff7e6;color:#1f2a44;font-family:Cairo,system-ui,sans-serif;padding:16px;padding-bottom:60px}
-main{max-width:900px;margin:0 auto}h1{font-size:24px;margin:6px 0 14px}.box{background:#fff;border:3px solid #ff8a00;border-radius:18px;padding:16px;margin-bottom:14px}
-label{display:block;font-weight:700;font-size:14px;margin:10px 0 4px}input,select,textarea{width:100%;font:inherit;padding:9px 12px;border:2px solid #0002;border-radius:10px;background:#fff}textarea{min-height:70px}
-.btn{border:0;border-radius:12px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer;background:#e9ecf5;color:#1f2a44}.btn.pr{background:#ff8a00;color:#fff}.btn.rd{background:#ef4444;color:#fff}.btn.gr{background:#22c55e;color:#fff}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:0 0 auto}.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:560px){.g2{grid-template-columns:1fr}}
-.les{display:flex;gap:10px;align-items:center;border-bottom:1px solid #0001;padding:10px 0;flex-wrap:wrap}.les .t{flex:1;min-width:180px;font-weight:700}.les small{color:#6b6f80;font-weight:400;display:block}
-.it{display:flex;gap:8px;align-items:center;background:#fff7e6;border-radius:10px;padding:6px 10px;margin:6px 0}.it span{flex:1}.msg{padding:10px;border-radius:10px;margin:10px 0;display:none}.msg.on{display:block}.msg.err{background:#fee2e2}.msg.ok{background:#dcfce7}
+*{box-sizing:border-box}
+body{margin:0;background:#fff7e6;color:#1f2a44;font-family:Cairo,system-ui,sans-serif;padding:16px;padding-bottom:60px}
+main{max-width:1000px;margin:0 auto}
+h1{font-size:24px;margin:6px 0 14px}
+h2{font-size:19px;margin:0 0 12px}
+.box{background:#fff;border:3px solid #ff8a00;border-radius:18px;padding:16px;margin-bottom:14px}
+label{display:block;font-weight:700;font-size:14px;margin:10px 0 4px}
+input,select,textarea{width:100%;font:inherit;padding:9px 12px;border:2px solid #0002;border-radius:10px;background:#fff}
+textarea{min-height:70px}
+.btn{display:inline-block;border:0;border-radius:12px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer;background:#e9ecf5;color:#1f2a44;text-decoration:none}
+.btn.pr{background:#ff8a00;color:#fff}.btn.rd{background:#ef4444;color:#fff}.btn.gr{background:#22c55e;color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:0 0 auto}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.g2{grid-template-columns:1fr}.btn{padding:9px 12px}}
+.les{display:flex;gap:10px;align-items:center;border-bottom:1px solid #0001;padding:10px 0;flex-wrap:wrap}
+.les .t{flex:1;min-width:180px;font-weight:700}.les small{color:#6b6f80;font-weight:400;display:block}
+.it{display:flex;gap:8px;align-items:center;background:#fff7e6;border-radius:10px;padding:6px 10px;margin:6px 0}
+.it span{flex:1;overflow-wrap:anywhere}
+.msg{padding:10px;border-radius:10px;margin:10px 0;display:none;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.on{display:block}.msg.err{background:#fee2e2}.msg.ok{background:#dcfce7}
 progress{width:100%;height:12px}
-</style></head><body><main>
-<h1>🎓 لوحة المعلم</h1><div id="msg" class="msg"></div><div id="app"></div></main>
-<script src="config.js"></script><script src="sb.js"></script>
+.note{font-size:13px;color:#6b6f80;margin:8px 0}
+.badge{display:inline-block;border-radius:99px;padding:3px 9px;background:#fff3cf;font-size:12px}
+.userrow{display:grid;grid-template-columns:minmax(0,1fr) 150px auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #0001}
+.useremail{overflow-wrap:anywhere}.useremail small{display:block;color:#6b6f80;font-size:12px}
+@media(max-width:600px){.userrow{grid-template-columns:1fr}.userrow .btn{justify-self:start}}
+</style>
+</head>
+<body>
+<main>
+<h1>🎓 لوحة إدارة منصة المذاكرة</h1>
+<div id="msg" class="msg"></div>
+<div id="app"></div>
+</main>
+<script src="config.js"></script>
+<script src="sb.js"></script>
 <script>
-const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function msg(t,k='ok'){const m=$('#msg');m.className='msg on '+k;m.textContent=t;clearTimeout(msg.t);msg.t=setTimeout(()=>m.className='msg',5000)}
-let lessons=[],ed=null;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const roleName={admin:'مدير',assistant:'مساعد',student:'طالب'};
+function msg(t,k='ok'){
+ const m=$('#msg');m.className='msg on '+k;m.textContent=t;
+ clearTimeout(msg.t);msg.t=setTimeout(()=>m.className='msg',7000);
+}
+let lessons=[],ed=null,me=null,role=null,users=[],activeView='lessons';
+
 async function init(){
- if(!SB.on()){$('#app').innerHTML='<div class="box">⚠️ لسه ما ضبطتش <b>config.js</b>. افتح ملف <b>README-AR.md</b> واتبع الخطوات (٥ دقايق)، وبعدها ارجع هنا.</div>';return}
- if(!SB.sess()){loginView();return}
- try{await refresh()}catch(e){if(/JWT|401|expired/i.test(e.message)){SB.logout();loginView();return}msg('خطأ: '+e.message,'err')}}
-function loginView(){$('#app').innerHTML=`<div class="box"><label>البريد الإلكتروني</label><input id="em" type="email" autocomplete="username"><label>كلمة السر</label><input id="pw" type="password" autocomplete="current-password"><div class="row" style="margin-top:12px"><button class="btn pr" id="li">دخول</button></div></div>`;
- $('#li').onclick=async()=>{try{await SB.login($('#em').value.trim(),$('#pw').value);init()}catch(e){msg(e.message,'err')}}}
-async function refresh(){lessons=await SB.q('lessons?select=*&order=sort.asc,created_at.asc');listView()}
-function listView(){$('#app').innerHTML=`<div class="row" style="margin-bottom:12px"><button class="btn pr" id="nw">➕ درس جديد</button><a class="btn" href="./" target="_blank" style="text-decoration:none">👁 شوف الموقع</a><button class="btn" id="lo">خروج</button></div>
- <div class="box">${lessons.map(l=>`<div class="les"><div style="font-size:30px">${esc(l.emoji)}</div><div class="t">${esc(l.title)}<small>${esc(l.cat)} • ${l.items.length} ملف • ${l.published?'منشور':'مخفي'}</small></div><button class="btn" data-e="${l.id}">تعديل</button><button class="btn" data-p="${l.id}">${l.published?'إخفاء':'نشر'}</button><button class="btn rd" data-x="${l.id}">حذف</button></div>`).join('')||'<div style="text-align:center;color:#6b6f80;padding:20px">لسه مفيش دروس مرفوعة. اضغط "درس جديد". (دروس الموقع الأساسية بتظهر للطلاب تلقائياً)</div>'}</div>`;
- $('#nw').onclick=()=>edit({title:'',cat:'إنجليزي',emoji:'📘',color:'#ff8a00',descr:'',items:[],sort:100,published:true});$('#lo').onclick=()=>{SB.logout();init()};
- document.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>edit(structuredClone(lessons.find(l=>l.id==b.dataset.e))));
- document.querySelectorAll('[data-p]').forEach(b=>b.onclick=async()=>{const l=lessons.find(x=>x.id==b.dataset.p);try{await SB.q('lessons?id=eq.'+l.id,{method:'PATCH',body:JSON.stringify({published:!l.published})});refresh()}catch(e){msg(e.message,'err')}});
- document.querySelectorAll('[data-x]').forEach(b=>b.onclick=async()=>{const l=lessons.find(x=>x.id==b.dataset.x);if(!confirm('تحذف "'+l.title+'"؟'))return;try{for(const it of l.items)if(it.deckId)await SB.q('deck_html?id=eq.'+it.deckId,{method:'DELETE'});await SB.q('lessons?id=eq.'+l.id,{method:'DELETE'});msg('اتحذف');refresh()}catch(e){msg(e.message,'err')}})}
-function edit(l){ed=l;const cats=['إنجليزي','نظم معلومات','إدارة','عام'];
- $('#app').innerHTML=`<div class="box"><div class="g2"><div><label>اسم الدرس</label><input id="ti" value="${esc(l.title)}"></div><div><label>التصنيف</label><input id="ct" list="cl" value="${esc(l.cat)}"><datalist id="cl">${cats.map(c=>`<option>${c}</option>`).join('')}</datalist></div>
- <div><label>إيموجي</label><input id="em" value="${esc(l.emoji)}" maxlength="4"></div><div><label>اللون</label><input id="co" type="color" value="${esc(l.color)}"></div><div><label>الترتيب (رقم أصغر = أول)</label><input id="so" type="number" value="${l.sort}"></div><div><label>الحالة</label><select id="pu"><option value="1" ${l.published?'selected':''}>منشور</option><option value="0" ${l.published?'':'selected'}>مخفي</option></select></div></div>
- <label>وصف قصير</label><textarea id="de">${esc(l.descr)}</textarea>
+ if(!SB.on()){
+  $('#app').innerHTML='<div class="box">⚠️ إعدادات الاتصال غير مكتملة. راجع ملف <b>config.js</b> وتعليمات README-AR.md.</div>';return;
+ }
+ if(!SB.sess()){loginView();return;}
+ try{
+  const session=SB.sess();
+  const uid=session?.user?.id;
+  if(!uid){SB.logout();loginView();return;}
+  const p=await SB.q('profiles?select=id,email,role&id=eq.'+encodeURIComponent(uid));
+  me=p?.[0]||null;role=me?.role||null;
+  if(!me||!['admin','assistant'].includes(role)){
+   $('#app').innerHTML='<div class="box"><h2>غير مسموح بالدخول</h2><p>لوحة الإدارة متاحة للمدير والمساعدين فقط. لو كنت تعتقد أن دي غلطة، تواصل مع مدير المنصة.</p><button class="btn" id="lo">خروج</button></div>';
+   $('#lo').onclick=()=>{SB.logout();init()};return;
+  }
+  await refresh();
+ }catch(e){
+  if(/JWT|401|expired|invalid.*token/i.test(e.message)){SB.logout();loginView();return;}
+  msg('تعذّر تحميل لوحة الإدارة: '+e.message,'err');
+ }
+}
+function loginView(){
+ $('#app').innerHTML=`<div class="box"><h2>تسجيل الدخول</h2><label>البريد الإلكتروني</label><input id="em" type="email" autocomplete="username"><label>كلمة السر</label><input id="pw" type="password" autocomplete="current-password"><div class="row" style="margin-top:12px"><button class="btn pr" id="li">دخول</button></div></div>`;
+ $('#li').onclick=async()=>{
+  const b=$('#li');b.disabled=true;
+  try{await SB.login($('#em').value.trim(),$('#pw').value);await init();}
+  catch(e){msg(e.message,'err');}
+  finally{b.disabled=false;}
+ };
+}
+async function refresh(){
+ lessons=await SB.q('lessons?select=*&order=sort.asc,created_at.asc');
+ if(role==='admin')users=await SB.q('profiles?select=id,email,role,created_at&order=created_at.desc');
+ listView();
+}
+function topBar(){
+ return `<div class="row" style="margin-bottom:12px">
+ <span class="badge">الدخول: ${esc(me?.email||'')} — ${esc(roleName[role]||role||'')}</span>
+ <button class="btn ${activeView==='lessons'?'pr':''}" id="vless">📚 الدروس</button>
+ ${role==='admin'?`<button class="btn ${activeView==='users'?'pr':''}" id="vusers">👥 المستخدمون والصلاحيات</button>`:''}
+ <a class="btn" href="./" target="_blank" rel="noopener">👁 شوف الموقع</a>
+ <button class="btn" id="lo">خروج</button></div>`;
+}
+function listView(){
+ activeView='lessons';
+ const visible=role==='assistant'?lessons.filter(l=>!l.published):lessons;
+ $('#app').innerHTML=topBar()+`<div class="row" style="margin-bottom:12px"><button class="btn pr" id="nw">➕ درس جديد ${role==='assistant'?'(مسودة)':''}</button></div>
+ <div class="box"><h2>الدروس ${role==='assistant'?'— المسودات فقط':''}</h2>
+ ${visible.map(l=>`<div class="les"><div style="font-size:30px">${esc(l.emoji||'📘')}</div><div class="t">${esc(l.title)}
+ <small>${esc(l.cat||'عام')} • ${(Array.isArray(l.items)?l.items.length:0)} ملف • ${l.published?'منشور':'مسودة'}</small></div>
+ <button class="btn" data-e="${esc(l.id)}">تعديل</button>
+ ${role==='admin'?`<button class="btn" data-p="${esc(l.id)}">${l.published?'إخفاء':'نشر'}</button><button class="btn rd" data-x="${esc(l.id)}">حذف</button>`:''}
+ </div>`).join('')||'<div style="text-align:center;color:#6b6f80;padding:20px">لا توجد دروس في القائمة دي.</div>'}
+ <p class="note">${role==='assistant'?'المساعد يقدر يعدّل المسودات فقط، ولا يقدر ينشر الدروس أو يحذفها.':'المدير لديه صلاحية إدارة الدروس ونشرها وإخفائها وحذفها.'}</p></div>`;
+ $('#nw').onclick=()=>edit({title:'',cat:'إنجليزي',emoji:'📘',color:'#ff8a00',descr:'',items:[],sort:100,published:role==='admin'});
+ $('#lo').onclick=()=>{SB.logout();me=null;role=null;init()};
+ $('#vless').onclick=listView;
+ const vu=$('#vusers');if(vu)vu.onclick=usersView;
+ document.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>edit(structuredClone(lessons.find(l=>l.id===b.dataset.e))));
+ document.querySelectorAll('[data-p]').forEach(b=>b.onclick=async()=>{
+  const l=lessons.find(x=>x.id===b.dataset.p);if(!l)return;
+  const next=!l.published;
+  if(!confirm(next?'نشر الدرس للطلاب والزوار؟':'إخفاء الدرس عن الطلاب والزوار؟'))return;
+  try{await SB.q('lessons?id=eq.'+encodeURIComponent(l.id),{method:'PATCH',body:JSON.stringify({published:next})});msg('تم تحديث حالة الدرس');await refresh();}
+  catch(e){msg('تعذّر تغيير حالة الدرس: '+e.message,'err');}
+ });
+ document.querySelectorAll('[data-x]').forEach(b=>b.onclick=async()=>{
+  const l=lessons.find(x=>x.id===b.dataset.x);if(!l)return;
+  if(!confirm('تحذف درس "'+l.title+'" نهائيًا؟'))return;
+  try{
+   for(const it of (l.items||[]))if(it.deckId)await SB.q('deck_html?id=eq.'+encodeURIComponent(it.deckId),{method:'DELETE'});
+   await SB.q('lessons?id=eq.'+encodeURIComponent(l.id),{method:'DELETE'});
+   msg('تم حذف الدرس');await refresh();
+  }catch(e){msg('تعذّر حذف الدرس: '+e.message,'err');}
+ });
+}
+function usersView(){
+ if(role!=='admin'){listView();return;}
+ activeView='users';
+ $('#app').innerHTML=topBar()+`<div class="box"><h2>👥 المستخدمون والصلاحيات</h2>
+ <p class="note">دي الحسابات المسجّلة بالفعل. الحساب الجديد بياخد دور «طالب» تلقائيًا. لتسجيل حساب جديد، أنشئه من Supabase Auth أولًا، وبعدها هيظهر هنا.</p>
+ ${users.map(u=>`<div class="userrow"><div class="useremail"><b>${esc(u.email||'بريد غير مسجل')}</b><small>${esc(u.id)}</small></div>
+ <select data-role="${esc(u.id)}" ${u.role==='admin'?'disabled':''}>
+ <option value="student" ${u.role==='student'?'selected':''}>طالب</option>
+ <option value="assistant" ${u.role==='assistant'?'selected':''}>مساعد</option>
+ ${u.role==='admin'?'<option value="admin" selected>مدير</option>':''}
+ </select><button class="btn pr" data-save-role="${esc(u.id)}" ${u.role==='admin'?'disabled':''}>حفظ الدور</button></div>`).join('')||'<p>لا توجد حسابات في profiles.</p>'}
+ <p class="note">للحماية، تغيير دور حساب المدير من هذه الشاشة غير مسموح. عيّن المساعد فقط لحساب شخص موثوق.</p>
+ </div>`;
+ $('#vless').onclick=listView;
+ $('#vusers').onclick=usersView;
+ $('#lo').onclick=()=>{SB.logout();me=null;role=null;init()};
+ document.querySelectorAll('[data-save-role]').forEach(b=>b.onclick=async()=>{
+  const id=b.dataset.saveRole,sel=document.querySelector('[data-role="'+CSS.escape(id)+'"]');
+  if(!sel)return;
+  if(id===me.id){msg('لا يمكن تغيير دور حساب المدير الذي تستخدمه حاليًا من هذه الشاشة.','err');return;}
+  const next=sel.value;
+  if(!['student','assistant'].includes(next)){msg('الدور المحدد غير صالح.','err');return;}
+  if(!confirm('تأكيد تغيير دور الحساب إلى «'+roleName[next]+'»؟'))return;
+  b.disabled=true;
+  try{
+   await SB.q('profiles?id=eq.'+encodeURIComponent(id),{method:'PATCH',body:JSON.stringify({role:next})});
+   msg('تم تحديث الصلاحية');
+   users=await SB.q('profiles?select=id,email,role,created_at&order=created_at.desc');
+   usersView();
+  }catch(e){msg('تعذّر تحديث الصلاحية: '+e.message,'err');}
+  finally{b.disabled=false;}
+ });
+}
+function edit(l){
+ ed=l;
+ const isAssistant=role==='assistant';
+ if(isAssistant&&l.id&&l.published){msg('المساعد لا يستطيع تعديل درس منشور.','err');return listView();}
+ $('#app').innerHTML=topBar()+`<div class="box"><h2>${l.id?'تعديل درس':'درس جديد'} ${isAssistant?'— سيُحفظ كمسودة':''}</h2>
+ <div class="g2"><div><label>اسم الدرس</label><input id="ti" value="${esc(l.title)}"></div><div><label>التصنيف</label><input id="ct" list="cl" value="${esc(l.cat)}"><datalist id="cl"><option>إنجليزي</option><option>نظم معلومات</option><option>إدارة</option><option>عام</option></datalist></div>
+ <div><label>إيموجي</label><input id="em" value="${esc(l.emoji||'📘')}" maxlength="4"></div><div><label>اللون</label><input id="co" type="color" value="${/^#[0-9a-f]{6}$/i.test(l.color||'')?l.color:'#ff8a00'}"></div>
+ <div><label>الترتيب (رقم أصغر = أول)</label><input id="so" type="number" value="${Number.isFinite(+l.sort)?+l.sort:100}"></div>
+ ${role==='admin'?`<div><label>الحالة</label><select id="pu"><option value="1" ${l.published?'selected':''}>منشور</option><option value="0" ${!l.published?'selected':''}>مسودة / مخفي</option></select></div>`:'<div><label>الحالة</label><input value="مسودة — لا يمكن للمساعد النشر" disabled></div>'}</div>
+ <label>وصف قصير</label><textarea id="de">${esc(l.descr||'')}</textarea>
  <label>ملفات الدرس</label><div id="its"></div>
  <div class="row" style="margin-top:8px"><button class="btn" data-a="deck">+ ديك تفاعلي (HTML)</button><button class="btn" data-a="pdf">+ PDF</button><button class="btn" data-a="video">+ فيديو (ملف)</button><button class="btn" data-a="yt">+ فيديو يوتيوب</button></div>
+ <p class="note">رفع الملفات متاح حسب صلاحيات الحساب وحدود Supabase. حذف عنصر من هذه القائمة يزيله من الدرس فقط.</p>
  <progress id="pg" value="0" max="1" style="display:none;margin-top:10px"></progress><input type="file" id="fi" style="display:none">
- <div class="row" style="margin-top:16px"><button class="btn gr" id="sv">💾 حفظ</button><button class="btn" id="cn">رجوع</button></div></div>`;items();
- document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>add(b.dataset.a));$('#cn').onclick=()=>refresh();$('#sv').onclick=save}
-function items(){$('#its').innerHTML=ed.items.map((it,i)=>`<div class="it"><span>${{deck:'🧩',pdf:'📄',video:'🎬',youtube:'▶️'}[it.kind]} ${esc(it.label||it.kind)}</span><button class="btn rd" data-r="${i}">✕</button></div>`).join('')||'<div style="color:#6b6f80">لسه مفيش ملفات</div>';
- document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{ed.items.splice(+b.dataset.r,1);items()})}
+ <div class="row" style="margin-top:16px"><button class="btn gr" id="sv">💾 حفظ ${isAssistant?'المسودة':''}</button><button class="btn" id="cn">رجوع</button></div></div>`;
+ items();
+ document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>add(b.dataset.a));
+ $('#cn').onclick=()=>refresh();$('#sv').onclick=save;
+ $('#vless').onclick=listView;const vu=$('#vusers');if(vu)vu.onclick=usersView;
+ $('#lo').onclick=()=>{SB.logout();me=null;role=null;init()};
+}
+function items(){
+ $('#its').innerHTML=(ed.items||[]).map((it,i)=>`<div class="it"><span>${({deck:'🧩',pdf:'📄',video:'🎬',youtube:'▶️'}[it.kind]||'📎')} ${esc(it.label||it.kind)}</span><button class="btn rd" data-r="${i}">✕ إزالة من الدرس</button></div>`).join('')||'<div style="color:#6b6f80">لسه مفيش ملفات</div>';
+ document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{ed.items.splice(+b.dataset.r,1);items()});
+}
 async function add(kind){
- if(kind=='yt'){const u=prompt('الصق رابط فيديو يوتيوب (يفضّل "غير مدرج")');if(!u)return;const m=u.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);if(!m)return msg('الرابط مش مفهوم','err');const lb=prompt('اسم الفيديو','فيديو الشرح')||'فيديو';ed.items.push({kind:'youtube',label:lb,yt:m[1]});return items()}
- const fi=$('#fi');fi.value='';fi.accept={deck:'.html,.htm,text/html',pdf:'.pdf,application/pdf',video:'video/*'}[kind];
- fi.onchange=async()=>{const f=fi.files[0];if(!f)return;const lb=prompt('اسم الملف اللي هيظهر للطالب',f.name.replace(/\.[^.]+$/,''))||f.name;const pg=$('#pg');pg.style.display='';pg.value=0;
-  try{if(kind=='deck'){if(f.size>6e6)throw new Error('الديك أكبر من 6 ميجا');const html=await f.text();const r=await SB.q('deck_html',{method:'POST',body:JSON.stringify({html})});ed.items.push({kind:'deck',label:lb,deckId:r[0].id})}
-   else{if(f.size>50*1024*1024)throw new Error('الملف أكبر من 50 ميجا (حد الخطة المجانية). ارفع الفيديو على يوتيوب وحط الرابط.');const path=Date.now()+'-'+f.name.replace(/[^\w.\-]/g,'_');const url=await SB.upload(f,path,p=>pg.value=p);ed.items.push({kind,label:lb,url})}
-   items();msg('اترفع ✓')}catch(e){msg(e.message,'err')}pg.style.display='none'};fi.click()}
-async function save(){ed.title=$('#ti').value.trim();if(!ed.title)return msg('اكتب اسم الدرس','err');
- const row={title:ed.title,cat:$('#ct').value.trim()||'عام',emoji:$('#em').value||'📘',color:$('#co').value,descr:$('#de').value,sort:+$('#so').value||100,published:$('#pu').value=='1',items:ed.items};
- try{if(ed.id)await SB.q('lessons?id=eq.'+ed.id,{method:'PATCH',body:JSON.stringify(row)});else await SB.q('lessons',{method:'POST',body:JSON.stringify(row)});msg('اتحفظ ✓');refresh()}catch(e){msg(e.message,'err')}}
+ if(kind==='yt'){
+  const u=prompt('الصق رابط فيديو يوتيوب (يفضّل «غير مدرج»)');if(!u)return;
+  const m=u.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);if(!m)return msg('الرابط مش مفهوم','err');
+  const lb=prompt('اسم الفيديو','فيديو الشرح')||'فيديو';
+  ed.items.push({kind:'youtube',label:lb,yt:m[1]});items();return;
+ }
+ const fi=$('#fi');fi.value='';
+ fi.accept={deck:'.html,.htm,text/html',pdf:'.pdf,application/pdf',video:'video/*'}[kind];
+ fi.onchange=async()=>{
+  const f=fi.files[0];if(!f)return;
+  const lb=prompt('اسم الملف اللي هيظهر للطالب',f.name.replace(/\.[^.]+$/,''))||f.name;
+  const pg=$('#pg');pg.style.display='';pg.value=0;
+  try{
+   if(kind==='deck'){
+    if(f.size>6e6)throw new Error('الديك أكبر من 6 ميجا');
+    const html=await f.text();
+    const r=await SB.q('deck_html',{method:'POST',body:JSON.stringify({html})});
+    ed.items.push({kind:'deck',label:lb,deckId:r[0].id});
+   }else{
+    if(f.size>50*1024*1024)throw new Error('الملف أكبر من 50 ميجا. ارفع الفيديو على يوتيوب وأضف الرابط بدلًا منه.');
+    const safeName=f.name.replace(/[^\w.\-]/g,'_');
+    const path=Date.now()+'-'+safeName;
+    const url=await SB.upload(f,path,p=>pg.value=p);
+    ed.items.push({kind,label:lb,url});
+   }
+   items();msg('تم رفع الملف ✓');
+  }catch(e){msg('فشل رفع الملف: '+e.message,'err');}
+  finally{pg.style.display='none';}
+ };
+ fi.click();
+}
+async function save(){
+ ed.title=$('#ti').value.trim();if(!ed.title)return msg('اكتب اسم الدرس','err');
+ const published=role==='admin'?$('#pu').value==='1':false;
+ const row={title:ed.title,cat:$('#ct').value.trim()||'عام',emoji:$('#em').value||'📘',color:$('#co').value,descr:$('#de').value,sort:+$('#so').value||100,published,items:ed.items||[]};
+ const b=$('#sv');b.disabled=true;
+ try{
+  if(ed.id)await SB.q('lessons?id=eq.'+encodeURIComponent(ed.id),{method:'PATCH',body:JSON.stringify(row)});
+  else await SB.q('lessons',{method:'POST',body:JSON.stringify(row)});
+  msg(published?'تم حفظ الدرس':'تم حفظ المسودة ✓');await refresh();
+ }catch(e){msg('تعذّر الحفظ: '+e.message,'err');}
+ finally{b.disabled=false;}
+}
 init();
-</script></body></html>
+</script>
+</body>
+</html>
