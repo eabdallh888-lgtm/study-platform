@@ -76,13 +76,23 @@ async function init(){
  }
 }
 function loginView(){
- $('#app').innerHTML=`<div class="box"><h2>تسجيل الدخول</h2><label>البريد الإلكتروني</label><input id="em" type="email" autocomplete="username"><label>كلمة السر</label><input id="pw" type="password" autocomplete="current-password"><div class="row" style="margin-top:12px"><button class="btn pr" id="li">دخول</button></div></div>`;
+ $('#app').innerHTML=`<div class="box"><h2>تسجيل الدخول</h2><label>البريد الإلكتروني</label><input id="em" type="email" autocomplete="username"><label>كلمة السر</label><input id="pw" type="password" autocomplete="current-password"><div class="row" style="margin-top:12px"><button class="btn pr" id="li">دخول</button><button class="btn" id="fg" type="button">نسيت كلمة السر؟</button></div></div>`;
+ $('#fg').onclick=forgotFlow;
  $('#li').onclick=async()=>{
   const b=$('#li');b.disabled=true;
   try{await SB.login($('#em').value.trim(),$('#pw').value);await init();}
   catch(e){msg(e.message,'err');}
   finally{b.disabled=false;}
  };
+}
+async function forgotFlow(){
+ const email=($('#em')?.value||'').trim();
+ if(!/^\S+@\S+\.\S+$/.test(email)){msg('اكتب بريدك الإلكتروني في الخانة الأولى، وبعدها اضغط "نسيت كلمة السر".','err');return}
+ const b=$('#fg');b.disabled=true;
+ try{await SB.recover(email,new URL('./',location.href).href);
+  msg('لو الإيميل ده مسجّل هتوصلك رسالة خلال دقايق. افتح الرابط من نفس المتصفح بسرعة، ولو بيطلع "منتهي" انسخ الرابط من الرسالة والصقه في المتصفح بدل ما تضغط عليه.')}
+ catch(e){msg(e.status===429?'طلبات كتير في وقت قصير. استنى دقيقة وجرّب تاني.':'تعذّر إرسال الرسالة. تأكد من الاتصال وجرّب تاني.','err')}
+ finally{b.disabled=false}
 }
 async function refresh(){
  lessons=await SB.q('lessons?select=*&order=sort.asc,created_at.asc');
